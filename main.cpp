@@ -318,10 +318,13 @@ void UARTCommandHandler(UART_Mode mode)
 			}
 			RENA.ConfigureRena(ChannelConfigs, 36, CIN, CSHIFT, CS);
 			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+
+			READ.set(1);
 			CLS.set(1);
-			delay(70);
-			ACQ.set(1);
+			__delay_cycles(500);
+
 			CLS.set(0);
+			ACQ.set(1);
 		}
 		/*************************************************************/
 		CurrentUARTMode = NoOp;
