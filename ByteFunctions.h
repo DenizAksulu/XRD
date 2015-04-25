@@ -31,6 +31,8 @@ unsigned char* AssembleDataPacket(unsigned char* Data, unsigned int Length);
  */
 bool CompareCharArrayToString(unsigned char* Array, const char* ConstArray, unsigned int ArrayLength);
 
+unsigned char DetermineNumberOfTriggeredChannels(unsigned char* Array, unsigned char ArrayLength);
+
 void UlToStr(char *s, unsigned long bin, unsigned char n);
 
 #endif /* BYTEFUNCTIONS_H_ */

@@ -32,6 +32,7 @@ unsigned char GetSystemInfo(unsigned char* RTC_AsCharArray, Operation_Mode &Last
 							unsigned long &SpectrumDoubleNumber, unsigned long &ConfigNumber)
 {
 	unsigned char SDBuffer[35] = {};
+	unsigned long Buffer[4] = {};
 	unsigned char index = 0;
 	unsigned int bytesread = 0;
 
@@ -53,17 +54,33 @@ unsigned char GetSystemInfo(unsigned char* RTC_AsCharArray, Operation_Mode &Last
 	/*WDT Number*/
 	WDTNumber = SDBuffer[index++] + (SDBuffer[index++] << 8);
 	/*Raw Data Number Number*/
-	RawDataNumber = SDBuffer[index++] + ((unsigned long)SDBuffer[index++] << 8) +
-			((unsigned long)SDBuffer[index++] << 16) + ((unsigned long)SDBuffer[index++] << 24);
+	Buffer[0] = SDBuffer[index++];
+	Buffer[1] = SDBuffer[index++];
+	Buffer[2] = SDBuffer[index++];
+	Buffer[3] = SDBuffer[index++];
+	RawDataNumber = Buffer[0] + (Buffer[1] << 8) +
+			(Buffer[2] << 16) + (Buffer[3] << 24);
 	/*Spectrum Single Number Number*/
-	SpectrumSingleNumber = SDBuffer[index++] + ((unsigned long)SDBuffer[index++] << 8) +
-			((unsigned long)SDBuffer[index++] << 16) + ((unsigned long)SDBuffer[index++] << 24);
+	Buffer[0] = SDBuffer[index++];
+	Buffer[1] = SDBuffer[index++];
+	Buffer[2] = SDBuffer[index++];
+	Buffer[3] = SDBuffer[index++];
+	SpectrumSingleNumber = Buffer[0] + (Buffer[1] << 8) +
+			(Buffer[2] << 16) + (Buffer[3] << 24);
 	/*Spectrum Double Number Number*/
-	SpectrumDoubleNumber = SDBuffer[index++] + ((unsigned long)SDBuffer[index++] << 8) +
-			((unsigned long)SDBuffer[index++] << 16) + ((unsigned long)SDBuffer[index++] << 24);
+	Buffer[0] = SDBuffer[index++];
+	Buffer[1] = SDBuffer[index++];
+	Buffer[2] = SDBuffer[index++];
+	Buffer[3] = SDBuffer[index++];
+	SpectrumDoubleNumber = Buffer[0] + (Buffer[1] << 8) +
+			(Buffer[2] << 16) + (Buffer[3] << 24);
 	/*RENA Config Number Number*/
-	ConfigNumber = SDBuffer[index++] + ((unsigned long)SDBuffer[index++] << 8) +
-			((unsigned long)SDBuffer[index++] << 16) + ((unsigned long)SDBuffer[index++] << 24);
+	Buffer[0] = SDBuffer[index++];
+	Buffer[1] = SDBuffer[index++];
+	Buffer[2] = SDBuffer[index++];
+	Buffer[3] = SDBuffer[index++];
+	ConfigNumber = Buffer[0] + (Buffer[1] << 8) +
+			(Buffer[2] << 16) + (Buffer[3] << 24);
 
 	return 1;
 }

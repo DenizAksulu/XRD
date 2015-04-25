@@ -108,18 +108,11 @@ void pulsar::GenerateClock(unsigned long pulsewidth, unsigned int clockcount )
 	}
 }
 
-
 void pulsar::GenerateSHRClock(unsigned long pulsewidth, unsigned int clockcount, pulsar sout, unsigned char* channels)
 {
 
 	for(unsigned int j = 0; j < clockcount; j++)
 	{
-		set(!get());
-
-		for(unsigned long i = 0; i < pulsewidth; i++)
-		{
-			__delay_cycles(CLOCK_DELAY);
-		}
 
 		if(sout.get())
 		{
@@ -127,12 +120,25 @@ void pulsar::GenerateSHRClock(unsigned long pulsewidth, unsigned int clockcount,
 		}
 		else
 			channels[j]=0;
-
 		set(!get());
-		for(unsigned long i = 0; i < pulsewidth; i++)
+
+		/*for(unsigned long i = 0; i < pulsewidth; i++)
 		{
 			__delay_cycles(CLOCK_DELAY);
+		}*/
+/*
+		if(sout.get())
+		{
+			channels[j]=1;
 		}
+		else
+			channels[j]=0;
+*/
+		set(!get());
+		/*for(unsigned long i = 0; i < pulsewidth; i++)
+		{
+			__delay_cycles(CLOCK_DELAY);
+		}*/
 	}
 }
 
@@ -143,10 +149,16 @@ void pulsar::EnableInterrupt()
 
 }
 
+void pulsar::DisableInterrupt()
+{
+	*(CurrentPort + 0x0018) &= ~CurrentPin;  //Interrupt enable
+	P2IFG = 0;
+}
+
 #pragma vector=PORT2_VECTOR
 __interrupt void Port_2(void)
 {
-	if(P2IFG & 0x02)
+	if(P2IFG & 16)
 		interruptVectorPORT2();
 	P2IFG = 0;
 }

@@ -42,6 +42,15 @@ unsigned char* AssembleDataPacket(unsigned char* Data, unsigned int Length)
 	return Packet;
 }
 
+unsigned char DetermineNumberOfTriggeredChannels(unsigned char* Array, unsigned char ArrayLength)
+{
+	unsigned char Counter = 0;
+	for(unsigned char i = 0; i < ArrayLength; i++)
+	{
+		if(Array[i]) Counter++;
+	}
+	return Counter;
+}
 
 void UlToStr(char *s, unsigned long bin, unsigned char n)
 {

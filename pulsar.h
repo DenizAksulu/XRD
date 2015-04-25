@@ -25,6 +25,7 @@ public:
 	void GenerateClock(unsigned long, unsigned int);
 	void GenerateSHRClock(unsigned long pulsewidth, unsigned int clockcount, pulsar sout, unsigned char* channels);
 	void EnableInterrupt();
+	void DisableInterrupt();
 private:
 	unsigned char* CurrentPort;
 	unsigned char CurrentPin;

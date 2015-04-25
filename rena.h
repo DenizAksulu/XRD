@@ -40,6 +40,7 @@ class rena {
 public:
 	rena();
 	void ConfigureRena(channelconfig*, unsigned char, pulsar, pulsar, pulsar);
+	void ReloadSIN(unsigned long pulsewidth, unsigned int clockcount, pulsar shrclk, pulsar sin, unsigned char* triggeredchannels);
 	unsigned char StandardPeakDetectionSequance(pulsar acq, pulsar cls, pulsar ts, unsigned int clspulsewidth, unsigned int traptime, unsigned int timoutdelay, unsigned int acqdelay);
 	unsigned char CheckConfig();
 	double THRESH35;

@@ -14,15 +14,16 @@ pulsar TIN((unsigned char*)&P7OUT, 4, 0);
 pulsar CIN((unsigned char*)&P5OUT, 128, 0);
 pulsar CSHIFT((unsigned char*)&P5OUT, 64, 0);
 pulsar CS((unsigned char*)&P5OUT, 32, 1);		// initial 1
-pulsar CLS((unsigned char*)&P8OUT, 16, 0);
-pulsar ACQ((unsigned char*)&P8OUT, 8, 0);
+pulsar CLS((unsigned char*)&P8OUT, 8, 0); // deðiþti //LVDS'de ters baðlanmýþ...
+pulsar CLF((unsigned char*)&P11OUT, 2, 0);
+pulsar ACQ((unsigned char*)&P8OUT, 16, 0); //deðiþti
 pulsar ADCCLK((unsigned char*)&P2OUT, 4, 0);
-pulsar ENABLE_5V((unsigned char*)&P2OUT, 8, 0);
+pulsar ENABLE_5V((unsigned char*)&P2OUT, 8, 0);		//BAÞLANGIÇ DURUMUNA DÝKKAT ET
 pulsar ENABLE_HV((unsigned char*)&P5OUT, 16, 0); // Pin Numaralarý deðiþecek!!
 pulsar ENABLE_ADC((unsigned char*)&P6OUT, 32, 0); // Pin Numaralarý deðiþecek!
 
 /*INPUTS*/
-pulsar TS1((unsigned char*)&P2OUT, 16);//, FallingEdge, &TS_Interrupt);
+pulsar TS1((unsigned char*)&P2OUT, 16, FallingEdge, &TS_Interrupt);
 pulsar TS2((unsigned char*)&P9OUT, 128);
 pulsar TOUT((unsigned char*)&P9OUT, 16); // Pin Numarasýna Dikkat!
 pulsar SOUT((unsigned char*)&P9OUT, 32);
@@ -49,6 +50,11 @@ struct channelconfig ChannelConfigs[36];
 UART_Mode CurrentUARTMode = NoOp;
 unsigned int MeasurementPeriod = 0;
 unsigned char ReceivedData[512]={};
+
+unsigned char TriggeredChannels[36] = {};
+double AcquiredChannelValue[36] = {};
+unsigned char HitBuffer[10800] = {};
+bool ACQCompleted = false;
 
 void ADCCLOCK(void);
 ADC adc;
@@ -111,6 +117,7 @@ int main(void)
 	}
 	enableSec(&RTCSecondInterrupt);
 	startRTC();
+
 	/*
 	 *
 	 */
@@ -119,10 +126,64 @@ int main(void)
 	 * Execution Number Should be increased!
 	 */
 	ExecutionNumber += 1;
+	TS1.EnableInterrupt();
 	/*
 	 *
 	 */
+	/*
+	 * Configure RENA
+	 */
+	if(ConfigNumber == 0)
+	{
+		for(int i = 0; i < 1; i++)
+		{
+			ChannelConfigs[i].DF = 0;
+			ChannelConfigs[i].DS = 150;
+			ChannelConfigs[i].ECAL = 1;
+			ChannelConfigs[i].ENF = 0;
+			ChannelConfigs[i].ENS = 1;
+			ChannelConfigs[i].FB_TC = 0;
+			ChannelConfigs[i].FETSEL = 0;
+			ChannelConfigs[i].FM = 0;
+			ChannelConfigs[i].FPDWN = 1;
+			ChannelConfigs[i].PDWN = 0;
+			ChannelConfigs[i].POL = 1;
+			ChannelConfigs[i].PZSEL = 0;
+			ChannelConfigs[i].RANGE = 0;
+			ChannelConfigs[i].RSEL = 0;
+			ChannelConfigs[i].SEL = 13;
+			ChannelConfigs[i].SIZEA = 0;
+			ChannelConfigs[i].address = i;
+			ChannelConfigs[i].gainselect = 3;
+		}
+		for(int i = 1; i < 36; i++)
+		{
+			ChannelConfigs[i].DF = 0;
+			ChannelConfigs[i].DS = 60;
+			ChannelConfigs[i].ECAL = 1;
+			ChannelConfigs[i].ENF = 0;
+			ChannelConfigs[i].ENS = 0;
+			ChannelConfigs[i].FB_TC = 0;
+			ChannelConfigs[i].FETSEL = 0;
+			ChannelConfigs[i].FM = 0;
+			ChannelConfigs[i].FPDWN = 1;
+			ChannelConfigs[i].PDWN = 1;
+			ChannelConfigs[i].POL = 1;
+			ChannelConfigs[i].PZSEL = 0;
+			ChannelConfigs[i].RANGE = 0;
+			ChannelConfigs[i].RSEL = 0;
+			ChannelConfigs[i].SEL = 13;
+			ChannelConfigs[i].SIZEA = 0;
+			ChannelConfigs[i].address = i;
+			ChannelConfigs[i].gainselect = 3;
+		}
+		RENA.ConfigureRena(ChannelConfigs, 36, CIN, CSHIFT, CS);
+	}
 
+	delay(1000);
+	/*
+	 *
+	 */
 	while(1)
 	{
 		UARTCommandHandler(CurrentUARTMode);
@@ -193,6 +254,21 @@ void RunOperationMode(Operation_Mode mode)
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	case DataAcquisition:
+		disableSec();
+		for(int i = 0; i < 10; i++)
+		{
+			CLS.set(1);
+			__delay_cycles(500);
+			ACQ.set(1);
+			READ.set(1);
+			CLS.set(0);
+			while(!ACQCompleted && CurrentOperationMode == DataAcquisition);
+			ACQCompleted = false;
+			AddRawData(HitBuffer, 10800, RawDataNumber);
+		}
+		RawDataNumber++;
+		enableSec(&RTCSecondInterrupt);
+		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	}
 }
@@ -316,15 +392,30 @@ void UARTCommandHandler(UART_Mode mode)
 				ChannelConfigs[i].FB_TC = ( ( ReceivedData[6*i+21] & 0x04 ) >> 2 );
 				ChannelConfigs[i].address = ( ( ReceivedData[6*i+21] & 0xF8 ) >> 3 ) | ( ( ReceivedData[6*i+22] & 0x01 ) << 5 );
 			}
+
+
 			RENA.ConfigureRena(ChannelConfigs, 36, CIN, CSHIFT, CS);
 			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
-
-			READ.set(1);
-			CLS.set(1);
-			__delay_cycles(500);
-
-			CLS.set(0);
-			ACQ.set(1);
+		}
+		/*************************************************************/
+		/*Change Mode Command*/
+		if(CompareCharArrayToString(ReceivedData, "ChangeMode", 10))
+		{
+			if(ReceivedData[10] == 0)
+			{
+				CurrentOperationMode = Idle;
+				pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+			}
+			else if(ReceivedData[10] == 1)
+			{
+				CurrentOperationMode = Diagnostic;
+				pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+			}
+			else if(ReceivedData[10] == 2)
+			{
+				CurrentOperationMode = DataAcquisition;
+				pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+			}
 		}
 		/*************************************************************/
 		CurrentUARTMode = NoOp;
@@ -360,8 +451,63 @@ void ADCACQTimerInterrupt()
     pc.Send(AssembleDataPacket(PACKET, 41), 51);
 }
 
+unsigned int HitNumber = 0;
 void TS_Interrupt(void)
 {
+	unsigned char adcvalue[2] = {};
+	unsigned char NumberOfTriggeredChannels = 0;
+	if(ACQ.get())
+	{
+		ACQ.set(0);
+		SHRCLK.GenerateSHRClock(1, 36, SOUT, TriggeredChannels);
+
+		RENA.ReloadSIN(1, 36, SHRCLK, SIN, TriggeredChannels);
+
+		NumberOfTriggeredChannels = DetermineNumberOfTriggeredChannels(TriggeredChannels, 36);
+
+		if(NumberOfTriggeredChannels == 0)  // Early Trigger
+		{
+			CLS.set(1);
+			__delay_cycles(500);
+			ACQ.set(1);
+			READ.set(1);
+			CLS.set(0);
+			__bis_SR_register(GIE);
+			return;
+		}
+
+		TIN.set(1);
+		__bis_SR_register(GIE);
+		for(unsigned int j = 0; j < NumberOfTriggeredChannels; j++)
+		{
+			*(unsigned int*)adcvalue = adc.SingleReadValue(Channel5);
+			HitBuffer[HitNumber*108 + 36 + 2*j] = adcvalue[0];
+			HitBuffer[HitNumber*108 + 36 + 2*j + 1] = adcvalue[1];
+			TCLK.set(!TCLK.get());
+			TCLK.set(!TCLK.get());
+		}
+		TIN.set(0);
+		for(int h = 0; h < 36; h++)
+		{
+			HitBuffer[HitNumber*108 + h] = TriggeredChannels[h];
+		}
+		HitNumber++;
+		if(HitNumber == 100)
+		{
+			ACQCompleted = true;
+			HitNumber = 0;
+			return;
+		}
+
+		//delay(1);
+		CLS.set(1);
+		__delay_cycles(500);
+		ACQ.set(1);
+		READ.set(1);
+		CLS.set(0);
+		__bis_SR_register(GIE);
+		return;
+	}
 }
 
 void RTCSecondInterrupt()

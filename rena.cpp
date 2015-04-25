@@ -181,6 +181,8 @@ void rena::ConfigureRena(channelconfig* config, unsigned char channelcount, puls
 		//delay
 
 		//delay(10);
+		cin.set(0);
+		cshift.set(0);
 		cs.set(1);
 		delay(5); //Dikkat!
 	}
@@ -230,6 +232,28 @@ unsigned char rena::CheckConfig()
 	else return 0;
 }
 
+void rena::ReloadSIN(unsigned long pulsewidth, unsigned int clockcount, pulsar shrclk, pulsar sin, unsigned char* triggeredchannels)
+{
+	for(int j = 0; j < clockcount; j++)
+	{
+		sin.set(triggeredchannels[j]);
+		shrclk.set(!shrclk.get());
+
+		//sin.set(triggeredchannels[j]);
+		/*for(unsigned long i = 0; i < pulsewidth; i++)
+		{
+			__delay_cycles(CLOCK_DELAY);
+		}*/
+
+
+		shrclk.set(!shrclk.get());
+		/*for(unsigned long i = 0; i < pulsewidth; i++)
+		{
+			__delay_cycles(CLOCK_DELAY);
+		}*/
+	}
+}
+
 unsigned char rena::StandardPeakDetectionSequance(pulsar acq, pulsar cls, pulsar ts, unsigned int clspulsewidth, unsigned int traptime, unsigned int timoutdelay, unsigned int acqdelay)
 {
 	cls.set(1);
@@ -248,6 +272,5 @@ unsigned char rena::StandardPeakDetectionSequance(pulsar acq, pulsar cls, pulsar
 
 	return 1;
 }
-
 
 } /* namespace msp430 */
