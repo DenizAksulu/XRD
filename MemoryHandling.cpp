@@ -177,6 +177,12 @@ unsigned char AddRawData(unsigned char* RawData, unsigned int DataLength, unsign
 	return 1;
 }
 
+unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsigned long FileNumber)
+{
+	return 1;
+}
+
+}
 unsigned char ReportEvent(StatusReports report)
 {
 	unsigned char index = 0;

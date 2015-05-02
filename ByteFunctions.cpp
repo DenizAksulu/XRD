@@ -63,3 +63,12 @@ void UlToStr(char *s, unsigned long bin, unsigned char n)
        bin /= 10;
    }
 }
+
+double ConvertToEnergyAnode(unsigned int ADCValue)
+{
+	return ADCValue;
+}
+double ConvertToEnergyCathode(unsigned int ADCValue)
+{
+	return ADCValue;
+}

@@ -25,6 +25,11 @@
 
 #define CLOCK_DELAY 25000
 
+/*Spectrum Parameters*/
+#define MAX_ENERGY_LEVEL 4095
+#define MIN_ENERGY_LEVEL 0
+#define NUMBER_OF_ENERGY_INTERVALS 100
+
 /*
  * Function Prototypes
  */

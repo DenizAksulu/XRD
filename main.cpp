@@ -68,6 +68,7 @@ rena RENA;
 
 UART pc(UCA0, 115200, &CommandVector);
 
+unsigned int SpectrumData[36][NUMBER_OF_ENERGY_INTERVALS] = {};
 
 /*
  * System Info Variables
@@ -133,7 +134,7 @@ int main(void)
 	/*
 	 * Configure RENA
 	 */
-	if(ConfigNumber == 0)
+	/*if(ConfigNumber == 0)
 	{
 		for(int i = 0; i < 1; i++)
 		{
@@ -180,7 +181,7 @@ int main(void)
 		RENA.ConfigureRena(ChannelConfigs, 36, CIN, CSHIFT, CS);
 	}
 
-	delay(1000);
+	delay(1000);*/
 	/*
 	 *
 	 */
@@ -255,7 +256,7 @@ void RunOperationMode(Operation_Mode mode)
 		break;
 	case DataAcquisition:
 		disableSec();
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < 100; i++)
 		{
 			CLS.set(1);
 			__delay_cycles(500);
@@ -265,6 +266,13 @@ void RunOperationMode(Operation_Mode mode)
 			while(!ACQCompleted && CurrentOperationMode == DataAcquisition);
 			ACQCompleted = false;
 			AddRawData(HitBuffer, 10800, RawDataNumber);
+		}
+		if(RawDataNumber > 0)
+		{
+			for(int j = 0; j < 100*100; j++)
+			{
+
+			}
 		}
 		RawDataNumber++;
 		enableSec(&RTCSecondInterrupt);
