@@ -30,6 +30,9 @@
 #define MIN_ENERGY_LEVEL 0
 #define NUMBER_OF_ENERGY_INTERVALS 100
 
+#define RAW_DATA_HIT_NUMBER 1
+#define SPECTRUM_DATA_HIT_NUMBER 60000
+
 /*
  * Function Prototypes
  */

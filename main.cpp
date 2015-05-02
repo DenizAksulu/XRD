@@ -53,7 +53,7 @@ unsigned char ReceivedData[512]={};
 
 unsigned char TriggeredChannels[36] = {};
 double AcquiredChannelValue[36] = {};
-unsigned char HitBuffer[10800] = {};
+unsigned char* HitBuffer;
 bool ACQCompleted = false;
 
 void ADCCLOCK(void);
@@ -67,8 +67,8 @@ Timer ADCACQTimer(TimerA0, &ADCACQTimerInterrupt);
 rena RENA;
 
 UART pc(UCA0, 115200, &CommandVector);
-
 unsigned int SpectrumData[36][NUMBER_OF_ENERGY_INTERVALS] = {};
+double SpectrumInterval = (MAX_ENERGY_LEVEL - MIN_ENERGY_LEVEL) / NUMBER_OF_ENERGY_INTERVALS;
 
 /*
  * System Info Variables
@@ -86,9 +86,6 @@ unsigned long ConfigNumber = 0;
 /*
  *
  */
-
-
-unsigned char SDBuffer[512] = {0};
 
 int main(void)
 {
@@ -185,6 +182,7 @@ int main(void)
 	/*
 	 *
 	 */
+
 	while(1)
 	{
 		UARTCommandHandler(CurrentUARTMode);
@@ -256,25 +254,55 @@ void RunOperationMode(Operation_Mode mode)
 		break;
 	case DataAcquisition:
 		disableSec();
-		for(int i = 0; i < 100; i++)
+		if(RawDataNumber == 0)
+		{
+			HitBuffer = new unsigned char[108*RAW_DATA_HIT_NUMBER];
+			for(int i = 0; i < 100; i++)
+			{
+				CLS.set(1);
+				__delay_cycles(500);
+				ACQ.set(1);
+				READ.set(1);
+				CLS.set(0);
+				while(!ACQCompleted && CurrentOperationMode == DataAcquisition)
+				{
+					if(!TS1.get())
+					{
+						CLS.set(1);
+						__delay_cycles(500);
+						ACQ.set(1);
+						READ.set(1);
+						CLS.set(0);
+					}
+				}
+				ACQCompleted = false;
+				AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber);
+			}
+			delete(HitBuffer);
+			RawDataNumber++;
+		}
+		else
 		{
 			CLS.set(1);
 			__delay_cycles(500);
 			ACQ.set(1);
 			READ.set(1);
 			CLS.set(0);
-			while(!ACQCompleted && CurrentOperationMode == DataAcquisition);
-			ACQCompleted = false;
-			AddRawData(HitBuffer, 10800, RawDataNumber);
-		}
-		if(RawDataNumber > 0)
-		{
-			for(int j = 0; j < 100*100; j++)
+			while(!ACQCompleted && CurrentOperationMode == DataAcquisition)
 			{
-
+				if(!TS1.get())
+				{
+					CLS.set(1);
+					__delay_cycles(500);
+					ACQ.set(1);
+					READ.set(1);
+					CLS.set(0);
+				}
 			}
+			ACQCompleted = false;
+			AddSpectrumSingleData(SpectrumData, SpectrumSingleNumber);
+			SpectrumSingleNumber++;
 		}
-		RawDataNumber++;
 		enableSec(&RTCSecondInterrupt);
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
@@ -462,6 +490,7 @@ void ADCACQTimerInterrupt()
 unsigned int HitNumber = 0;
 void TS_Interrupt(void)
 {
+	unsigned int ADCvalueINT[36] = {};
 	unsigned char adcvalue[2] = {};
 	unsigned char NumberOfTriggeredChannels = 0;
 	if(ACQ.get())
@@ -488,23 +517,49 @@ void TS_Interrupt(void)
 		__bis_SR_register(GIE);
 		for(unsigned int j = 0; j < NumberOfTriggeredChannels; j++)
 		{
-			*(unsigned int*)adcvalue = adc.SingleReadValue(Channel5);
-			HitBuffer[HitNumber*108 + 36 + 2*j] = adcvalue[0];
-			HitBuffer[HitNumber*108 + 36 + 2*j + 1] = adcvalue[1];
+			ADCvalueINT[j] = adc.SingleReadValue(Channel5);
+			*(unsigned int*)adcvalue = ADCvalueINT[j];
+			if(RawDataNumber == 0)
+			{
+				HitBuffer[HitNumber*108 + 36 + 2*j] = adcvalue[0];
+				HitBuffer[HitNumber*108 + 36 + 2*j + 1] = adcvalue[1];
+			}
 			TCLK.set(!TCLK.get());
 			TCLK.set(!TCLK.get());
 		}
 		TIN.set(0);
-		for(int h = 0; h < 36; h++)
+		if(RawDataNumber == 0)
 		{
-			HitBuffer[HitNumber*108 + h] = TriggeredChannels[h];
+			for(int h = 0; h < 36; h++)
+			{
+				HitBuffer[HitNumber*108 + h] = TriggeredChannels[h];
+			}
+			HitNumber++;
+			if(HitNumber == RAW_DATA_HIT_NUMBER)
+			{
+				ACQCompleted = true;
+				HitNumber = 0;
+				return;
+			}
 		}
-		HitNumber++;
-		if(HitNumber == 100)
+		else
 		{
-			ACQCompleted = true;
-			HitNumber = 0;
-			return;
+			int ADCindex = 0;
+			for(int m = 0; m < 36; m++)
+			{
+				if(TriggeredChannels[m])
+				{
+					SpectrumData[m][(unsigned int)(ADCvalueINT[ADCindex]/SpectrumInterval)]++;
+					ADCindex++;
+				}
+			}
+			HitNumber++;
+			if(HitNumber == SPECTRUM_DATA_HIT_NUMBER)
+			{
+				ACQCompleted = true;
+				HitNumber = 0;
+				return;
+			}
 		}
 
 		//delay(1);

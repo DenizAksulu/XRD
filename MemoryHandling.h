@@ -28,7 +28,7 @@ unsigned char UpdateSystemInfo(unsigned char* RTC_AsCharArray, Operation_Mode La
 							unsigned long SpectrumDoubleNumber, unsigned long ConfigNumber);
 
 unsigned char AddRawData(unsigned char* RawData, unsigned int DataLength, unsigned long FileNumber);
-
+unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[100] , unsigned long SpectrumSingleNumber);
 unsigned char ReportEvent(StatusReports report);
 /*
  *

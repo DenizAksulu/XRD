@@ -4,11 +4,11 @@
  *  Created on: 04 Tem 2014
  *      Author: Deniz
  */
+#include "MemoryHandling.h"
 #include "ff.h"
 #include "main.h"
 #include "diskio.h"
 #include "ByteFunctions.h"
-#include "MemoryHandling.h"
 
 
 FATFS fatfs;                                            /* File system object */
@@ -182,7 +182,50 @@ unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsig
 	return 1;
 }
 
+unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERGY_INTERVALS] , unsigned long FileNumber)
+{
+	/*Adjusting File Name*/
+	unsigned char SpectrumDataChar[NUMBER_OF_ENERGY_INTERVALS * 2] = {0};
+	unsigned char SpectrumCHAR[2];
+	unsigned int byteswritten = 0;
+	unsigned char index = 0;
+	char FileName[11];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, FileNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 's';
+	FileName[index++] = 'p';
+	FileName[index++] = 's';
+	FileName[index++] = '\0';
+
+	for(int i = 0; i < 36; i++)
+	{
+		/**/
+		for(int j = 0; j < NUMBER_OF_ENERGY_INTERVALS; j++)
+		{
+			*(unsigned int*)SpectrumCHAR = SpectrumData[i][j];
+			SpectrumDataChar[2*j] = SpectrumCHAR[0];
+			SpectrumDataChar[2*j + 1] = SpectrumCHAR[1];
+		}
+		/**/
+		/*Open File*/
+		if(f_open(&file, FileName, FA_OPEN_ALWAYS | FA_WRITE) != FR_OK) return 0;
+		/**/
+		/*Write into File*/
+		DWORD FileLength = f_size(&file);
+		if(f_lseek(&file, FileLength) != FR_OK) return 0;
+		if(f_write(&file, SpectrumDataChar, NUMBER_OF_ENERGY_INTERVALS*2, &byteswritten) != FR_OK) return 0;
+		/**/
+		if(f_close(&file) != FR_OK) return 0;
+	}
+	return 1;
 }
+
 unsigned char ReportEvent(StatusReports report)
 {
 	unsigned char index = 0;
