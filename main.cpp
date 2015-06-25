@@ -17,10 +17,11 @@ pulsar CS((unsigned char*)&P5OUT, 32, 1);		// initial 1
 pulsar CLS((unsigned char*)&P8OUT, 8, 0); // deðiþti //LVDS'de ters baðlanmýþ...
 pulsar CLF((unsigned char*)&P11OUT, 2, 0);
 pulsar ACQ((unsigned char*)&P8OUT, 16, 0); //deðiþti
-pulsar ADCCLK((unsigned char*)&P2OUT, 4, 0);
+
 pulsar ENABLE_5V((unsigned char*)&P2OUT, 8, 0);		//BAÞLANGIÇ DURUMUNA DÝKKAT ET
 pulsar ENABLE_HV((unsigned char*)&P5OUT, 16, 0); // Pin Numaralarý deðiþecek!!
 pulsar ENABLE_ADC((unsigned char*)&P6OUT, 32, 0); // Pin Numaralarý deðiþecek!
+pulsar TEST((unsigned char*)&P2OUT, 1, 0); // Pin Numaralarý deðiþecek!
 
 /*INPUTS*/
 pulsar TS1((unsigned char*)&P2OUT, 16, FallingEdge, &TS_Interrupt);
@@ -28,22 +29,6 @@ pulsar TS2((unsigned char*)&P9OUT, 128);
 pulsar TOUT((unsigned char*)&P9OUT, 16); // Pin Numarasýna Dikkat!
 pulsar SOUT((unsigned char*)&P9OUT, 32);
 pulsar OVRFLOW((unsigned char*)&P9OUT, 8);
-pulsar OTR((unsigned char*)&P7OUT, 32);
-pulsar BITS[14] = {
-		pulsar((unsigned char*)&P7OUT, 64),
-		pulsar((unsigned char*)&P7OUT, 128),
-		pulsar((unsigned char*)&P5OUT, 1),
-		pulsar((unsigned char*)&P5OUT, 2),
-		pulsar((unsigned char*)&P1OUT, 1),
-		pulsar((unsigned char*)&P1OUT, 2),
-		pulsar((unsigned char*)&P1OUT, 4),
-		pulsar((unsigned char*)&P1OUT, 8),
-		pulsar((unsigned char*)&P1OUT, 16),
-		pulsar((unsigned char*)&P1OUT, 32),
-		pulsar((unsigned char*)&P1OUT, 64),
-		pulsar((unsigned char*)&P1OUT, 128),
-		pulsar((unsigned char*)&P2OUT, 1),
-		pulsar((unsigned char*)&P2OUT, 2)};
 
 struct channelconfig ChannelConfigs[36];
 
@@ -53,13 +38,10 @@ unsigned char ReceivedData[512]={};
 
 unsigned char TriggeredChannels[36] = {};
 double AcquiredChannelValue[36] = {};
-unsigned char* HitBuffer;
+unsigned char HitBuffer[108*RAW_DATA_HIT_NUMBER] = {};
 bool ACQCompleted = false;
 
-void ADCCLOCK(void);
 ADC adc;
-
-AD9243 ad9243(BITS, &ADCCLK, &OTR);
 
 
 Timer ADCACQTimer(TimerA0, &ADCACQTimerInterrupt);
@@ -182,7 +164,7 @@ int main(void)
 	/*
 	 *
 	 */
-
+	RawDataNumber = 0;
 	while(1)
 	{
 		UARTCommandHandler(CurrentUARTMode);
@@ -201,7 +183,7 @@ void RunOperationMode(Operation_Mode mode)
 		ENABLE_HV.set(0); // Disable HV
 		ENABLE_ADC.set(0); // Disable ADC
 		ENABLE_5V.set(1); // Disable 5V
-		__bis_SR_register(LPM4_bits); // Sleep
+		//__bis_SR_register(LPM4_bits); // Sleep
 		break;
 	case Diagnostic:
 		ENABLE_5V.set(1); // Enable 5V
@@ -209,7 +191,7 @@ void RunOperationMode(Operation_Mode mode)
 		{
 			ENABLE_ADC.set(1); // Enable ADC
 			/* Check ADC */ /* Function is empty... */
-			if(ad9243.CheckAD9243())
+			if(1)
 			{
 				ReportEvent(ADC_OK); // Report ADC_OK
 
@@ -256,7 +238,6 @@ void RunOperationMode(Operation_Mode mode)
 		disableSec();
 		if(RawDataNumber == 0)
 		{
-			HitBuffer = new unsigned char[108*RAW_DATA_HIT_NUMBER];
 			for(int i = 0; i < 100; i++)
 			{
 				CLS.set(1);
@@ -278,8 +259,7 @@ void RunOperationMode(Operation_Mode mode)
 				ACQCompleted = false;
 				AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber);
 			}
-			delete(HitBuffer);
-			RawDataNumber++;
+			//RawDataNumber++;
 		}
 		else
 		{
@@ -493,7 +473,7 @@ void TS_Interrupt(void)
 	unsigned int ADCvalueINT[36] = {};
 	unsigned char adcvalue[2] = {};
 	unsigned char NumberOfTriggeredChannels = 0;
-	if(ACQ.get())
+	if(ACQ.get() && !CLS.get())
 	{
 		ACQ.set(0);
 		SHRCLK.GenerateSHRClock(1, 36, SOUT, TriggeredChannels);
@@ -527,6 +507,7 @@ void TS_Interrupt(void)
 			TCLK.set(!TCLK.get());
 			TCLK.set(!TCLK.get());
 		}
+		__bic_SR_register(GIE);
 		TIN.set(0);
 		if(RawDataNumber == 0)
 		{

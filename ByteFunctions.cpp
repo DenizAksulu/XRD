@@ -66,7 +66,8 @@ void UlToStr(char *s, unsigned long bin, unsigned char n)
 
 double ConvertToEnergyAnode(unsigned int ADCValue)
 {
-	return ADCValue;
+	double x = 20.34*ADCValue + 7.45;
+	return x;
 }
 double ConvertToEnergyCathode(unsigned int ADCValue)
 {

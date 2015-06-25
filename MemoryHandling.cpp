@@ -179,6 +179,28 @@ unsigned char AddRawData(unsigned char* RawData, unsigned int DataLength, unsign
 
 unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsigned long FileNumber)
 {
+	unsigned char index = 0;
+	unsigned int bytesread = 0;
+
+	char FileName[11];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, FileNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 'r';
+	FileName[index++] = 'a';
+	FileName[index++] = 'w';
+	FileName[index++] = '\0';
+
+	if(f_open(&file, FileName, FA_READ) != FR_OK) return 0;
+
+	if(f_read(&file, RawData, DataLength, &bytesread) != FR_OK) return 0;
+
+	if(f_close(&file) != FR_OK) return 0;
 	return 1;
 }
 
