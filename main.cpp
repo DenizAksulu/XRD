@@ -164,11 +164,11 @@ int main(void)
 	/*
 	 *
 	 */
-	RawDataNumber = 0;
 	while(1)
 	{
 		UARTCommandHandler(CurrentUARTMode);
 		RunOperationMode(CurrentOperationMode);
+		ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 0, 0);
 	}
 }
 
@@ -236,32 +236,7 @@ void RunOperationMode(Operation_Mode mode)
 		break;
 	case DataAcquisition:
 		disableSec();
-		if(RawDataNumber == 0)
-		{
-			for(int i = 0; i < 100; i++)
-			{
-				CLS.set(1);
-				__delay_cycles(500);
-				ACQ.set(1);
-				READ.set(1);
-				CLS.set(0);
-				while(!ACQCompleted && CurrentOperationMode == DataAcquisition)
-				{
-					if(!TS1.get())
-					{
-						CLS.set(1);
-						__delay_cycles(500);
-						ACQ.set(1);
-						READ.set(1);
-						CLS.set(0);
-					}
-				}
-				ACQCompleted = false;
-				AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber);
-			}
-			//RawDataNumber++;
-		}
-		else
+		for(int i = 0; i < 100; i++)
 		{
 			CLS.set(1);
 			__delay_cycles(500);
@@ -280,11 +255,17 @@ void RunOperationMode(Operation_Mode mode)
 				}
 			}
 			ACQCompleted = false;
-			AddSpectrumSingleData(SpectrumData, SpectrumSingleNumber);
-			SpectrumSingleNumber++;
+			AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber);
 		}
+		RawDataNumber++;
 		enableSec(&RTCSecondInterrupt);
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
+		break;
+	case DataProcessing:
+		for(int i = 0; i < 100; i++)
+		{
+			ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, SpectrumSingleNumber);
+		}
 		break;
 	}
 }
@@ -470,7 +451,6 @@ void ADCACQTimerInterrupt()
 unsigned int HitNumber = 0;
 void TS_Interrupt(void)
 {
-	unsigned int ADCvalueINT[36] = {};
 	unsigned char adcvalue[2] = {};
 	unsigned char NumberOfTriggeredChannels = 0;
 	if(ACQ.get() && !CLS.get())
@@ -497,8 +477,7 @@ void TS_Interrupt(void)
 		__bis_SR_register(GIE);
 		for(unsigned int j = 0; j < NumberOfTriggeredChannels; j++)
 		{
-			ADCvalueINT[j] = adc.SingleReadValue(Channel5);
-			*(unsigned int*)adcvalue = ADCvalueINT[j];
+			*(unsigned int*)adcvalue = adc.SingleReadValue(Channel5);
 			if(RawDataNumber == 0)
 			{
 				HitBuffer[HitNumber*108 + 36 + 2*j] = adcvalue[0];
@@ -509,38 +488,17 @@ void TS_Interrupt(void)
 		}
 		__bic_SR_register(GIE);
 		TIN.set(0);
-		if(RawDataNumber == 0)
+
+		for(int h = 0; h < 36; h++)
 		{
-			for(int h = 0; h < 36; h++)
-			{
-				HitBuffer[HitNumber*108 + h] = TriggeredChannels[h];
-			}
-			HitNumber++;
-			if(HitNumber == RAW_DATA_HIT_NUMBER)
-			{
-				ACQCompleted = true;
-				HitNumber = 0;
-				return;
-			}
+			HitBuffer[HitNumber*108 + h] = TriggeredChannels[h];
 		}
-		else
+		HitNumber++;
+		if(HitNumber == RAW_DATA_HIT_NUMBER)
 		{
-			int ADCindex = 0;
-			for(int m = 0; m < 36; m++)
-			{
-				if(TriggeredChannels[m])
-				{
-					SpectrumData[m][(unsigned int)(ADCvalueINT[ADCindex]/SpectrumInterval)]++;
-					ADCindex++;
-				}
-			}
-			HitNumber++;
-			if(HitNumber == SPECTRUM_DATA_HIT_NUMBER)
-			{
-				ACQCompleted = true;
-				HitNumber = 0;
-				return;
-			}
+			ACQCompleted = true;
+			HitNumber = 0;
+			return;
 		}
 
 		//delay(1);
