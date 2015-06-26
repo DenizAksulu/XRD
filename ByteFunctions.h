@@ -35,6 +35,6 @@ unsigned char DetermineNumberOfTriggeredChannels(unsigned char* Array, unsigned 
 
 void UlToStr(char *s, unsigned long bin, unsigned char n);
 
-double ConvertToEnergyAnode(unsigned int ADCValue);
-double ConvertToEnergyCathode(unsigned int ADCValue);
+double ConvertToEnergyAnode(double ADCValue);
+double ConvertToEnergyCathode(double ADCValue);
 #endif /* BYTEFUNCTIONS_H_ */

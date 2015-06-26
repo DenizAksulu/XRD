@@ -164,11 +164,11 @@ int main(void)
 	/*
 	 *
 	 */
+	CurrentOperationMode = DataProcessing;
 	while(1)
 	{
 		UARTCommandHandler(CurrentUARTMode);
 		RunOperationMode(CurrentOperationMode);
-		ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 0, 0);
 	}
 }
 
@@ -255,17 +255,34 @@ void RunOperationMode(Operation_Mode mode)
 				}
 			}
 			ACQCompleted = false;
-			AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber);
+			while(!AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber));
 		}
 		RawDataNumber++;
 		enableSec(&RTCSecondInterrupt);
-		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
+		CurrentOperationMode = DataProcessing; // Set CurrentOperationMode to Idle
 		break;
 	case DataProcessing:
 		for(int i = 0; i < 100; i++)
 		{
-			ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, SpectrumSingleNumber);
+			while(!ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, SpectrumSingleNumber));
+			for(int m = 0; m < RAW_DATA_HIT_NUMBER; m++)
+			{
+				int NumberOfTriggeredChannels = 0;
+				unsigned int ADCVoltage = 0;
+				for(int n = 0; n < 36; n++)
+				{
+					if(HitBuffer[n + 108*m] == 1)
+					{
+						ADCVoltage = (HitBuffer[108*m + 36 + NumberOfTriggeredChannels*2] + 256*HitBuffer[108*m + 36 + NumberOfTriggeredChannels*2 + 1]);
+						SpectrumData[n][(unsigned int)(ConvertToEnergyAnode(ADCVoltage)/SpectrumInterval)]++;
+						NumberOfTriggeredChannels++;
+					}
+				}
+			}
 		}
+		while(!AddSpectrumSingleData(SpectrumData, SpectrumSingleNumber));
+		SpectrumSingleNumber++;
+		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	}
 }
