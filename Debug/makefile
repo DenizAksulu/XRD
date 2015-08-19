@@ -12,6 +12,7 @@ $(GEN_CMDS__FLAG) \
 "./ADC.obj" \
 "./ByteFunctions.obj" \
 "./HAL_SDCard.obj" \
+"./I2C.obj" \
 "./MemoryHandling.obj" \
 "./RTC.obj" \
 "./SPI.obj" \
@@ -155,9 +156,9 @@ XRD.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "AD9243.pp" "ADC.pp" "ByteFunctions.pp" "MemoryHandling.pp" "RTC.pp" "SPI.pp" "Timer.pp" "UART.pp" "main.pp" "pulsar.pp" "rena.pp" 
+	-$(RM) "AD9243.pp" "ADC.pp" "ByteFunctions.pp" "I2C.pp" "MemoryHandling.pp" "RTC.pp" "SPI.pp" "Timer.pp" "UART.pp" "main.pp" "pulsar.pp" "rena.pp" 
 	-$(RM) "HAL_SDCard.pp" "ff.pp" "mmc.pp" "pre_init.pp" 
-	-$(RM) "AD9243.obj" "ADC.obj" "ByteFunctions.obj" "HAL_SDCard.obj" "MemoryHandling.obj" "RTC.obj" "SPI.obj" "Timer.obj" "UART.obj" "ff.obj" "main.obj" "mmc.obj" "pre_init.obj" "pulsar.obj" "rena.obj" 
+	-$(RM) "AD9243.obj" "ADC.obj" "ByteFunctions.obj" "HAL_SDCard.obj" "I2C.obj" "MemoryHandling.obj" "RTC.obj" "SPI.obj" "Timer.obj" "UART.obj" "ff.obj" "main.obj" "mmc.obj" "pre_init.obj" "pulsar.obj" "rena.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

@@ -7,6 +7,7 @@ CPP_SRCS += \
 ../AD9243.cpp \
 ../ADC.cpp \
 ../ByteFunctions.cpp \
+../I2C.cpp \
 ../MemoryHandling.cpp \
 ../RTC.cpp \
 ../SPI.cpp \
@@ -30,6 +31,7 @@ OBJS += \
 ./ADC.obj \
 ./ByteFunctions.obj \
 ./HAL_SDCard.obj \
+./I2C.obj \
 ./MemoryHandling.obj \
 ./RTC.obj \
 ./SPI.obj \
@@ -46,6 +48,7 @@ CPP_DEPS += \
 ./AD9243.pp \
 ./ADC.pp \
 ./ByteFunctions.pp \
+./I2C.pp \
 ./MemoryHandling.pp \
 ./RTC.pp \
 ./SPI.pp \
@@ -65,6 +68,7 @@ CPP_DEPS__QUOTED += \
 "AD9243.pp" \
 "ADC.pp" \
 "ByteFunctions.pp" \
+"I2C.pp" \
 "MemoryHandling.pp" \
 "RTC.pp" \
 "SPI.pp" \
@@ -85,6 +89,7 @@ OBJS__QUOTED += \
 "ADC.obj" \
 "ByteFunctions.obj" \
 "HAL_SDCard.obj" \
+"I2C.obj" \
 "MemoryHandling.obj" \
 "RTC.obj" \
 "SPI.obj" \
@@ -101,6 +106,7 @@ CPP_SRCS__QUOTED += \
 "../AD9243.cpp" \
 "../ADC.cpp" \
 "../ByteFunctions.cpp" \
+"../I2C.cpp" \
 "../MemoryHandling.cpp" \
 "../RTC.cpp" \
 "../SPI.cpp" \

@@ -26,6 +26,8 @@ pulsar.obj: ../integer.h
 pulsar.obj: ../ffconf.h
 pulsar.obj: ../diskio.h
 pulsar.obj: ../MemoryHandling.h
+pulsar.obj: ../I2C.h
+pulsar.obj: ../pulsar.h
 
 ../pulsar.cpp: 
 ../pulsar.h: 
@@ -53,3 +55,5 @@ c:/ti/ccsv6/tools/compiler/msp430_4.3.3/include/stdint.h:
 ../ffconf.h: 
 ../diskio.h: 
 ../MemoryHandling.h: 
+../I2C.h: 
+../pulsar.h: 

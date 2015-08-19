@@ -26,6 +26,8 @@ rena.obj: ../integer.h
 rena.obj: ../ffconf.h
 rena.obj: ../diskio.h
 rena.obj: ../MemoryHandling.h
+rena.obj: ../I2C.h
+rena.obj: ../pulsar.h
 rena.obj: ../pulsar.h
 rena.obj: ../ADC.h
 
@@ -55,5 +57,7 @@ c:/ti/ccsv6/tools/compiler/msp430_4.3.3/include/stdint.h:
 ../ffconf.h: 
 ../diskio.h: 
 ../MemoryHandling.h: 
+../I2C.h: 
+../pulsar.h: 
 ../pulsar.h: 
 ../ADC.h: 

@@ -25,6 +25,8 @@ main.obj: ../integer.h
 main.obj: ../ffconf.h
 main.obj: ../diskio.h
 main.obj: ../MemoryHandling.h
+main.obj: ../I2C.h
+main.obj: ../pulsar.h
 
 ../main.cpp: 
 ../main.h: 
@@ -51,3 +53,5 @@ c:/ti/ccsv6/tools/compiler/msp430_4.3.3/include/stdint.h:
 ../ffconf.h: 
 ../diskio.h: 
 ../MemoryHandling.h: 
+../I2C.h: 
+../pulsar.h: 

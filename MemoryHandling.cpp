@@ -277,6 +277,53 @@ unsigned char ReportEvent(StatusReports report)
 	return 1;
 }
 
+unsigned long GetRawDataFileLength(unsigned long RawDataNumber)
+{
+	unsigned char index = 0;
+
+	char FileName[14];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, RawDataNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 'r';
+	FileName[index++] = 'a';
+	FileName[index++] = 'w';
+	FileName[index++] = '\0';
+
+	if(f_open(&file, FileName, FA_READ) != FR_OK) return 0;
+	DWORD FileLength = f_size(&file);
+	if(f_close(&file) != FR_OK) return 0;
+	return FileLength;
+}
+
+unsigned long GetSpectrumDataFileLength(unsigned long SpectrumSingleNumber)
+{
+	unsigned char index = 0;
+
+	char FileName[14];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, SpectrumSingleNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 's';
+	FileName[index++] = 'p';
+	FileName[index++] = 's';
+	FileName[index++] = '\0';
+
+	if(f_open(&file, FileName, FA_READ) != FR_OK) return 0;
+	DWORD FileLength = f_size(&file);
+	if(f_close(&file) != FR_OK) return 0;
+	return FileLength;
+}
 
 
 

@@ -12,6 +12,17 @@
 #ifndef BYTEFUNCTIONS_H_
 #define BYTEFUNCTIONS_H_
 
+const double MultiplierCoefficientsAnode[15] =
+{
+		20.34, 21.45, 19.98, 20.42, 21.15, 22.01, 18.85, 19.93,
+		20.54, 21.43, 22.44, 18.34, 21.04, 23.35, 22.46
+};
+const double AddingCoefficientsAnode[15] =
+{
+		7.45, 6.93, 8.95, 7.03, 8.34, 6.93, 9.12, 7.85, 8.87,
+		7.23, 5.67, 10.47, 9.50, 4.45, 5.67
+};
+
 /*!\fn unsigned char* AssembleDataPacket(unsigned char* Data, unsigned int Length)
  * \brief Assembles the specified data into a packet with the right format for UART transmission.
  *
@@ -35,6 +46,6 @@ unsigned char DetermineNumberOfTriggeredChannels(unsigned char* Array, unsigned 
 
 void UlToStr(char *s, unsigned long bin, unsigned char n);
 
-double ConvertToEnergyAnode(double ADCValue);
-double ConvertToEnergyCathode(double ADCValue);
+double ConvertToEnergyAnode(double ADCValue, unsigned char ChannelNumber);
+double ConvertToEnergyCathode(double ADCValue, unsigned char ChannelNumber);
 #endif /* BYTEFUNCTIONS_H_ */

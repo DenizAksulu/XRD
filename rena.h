@@ -12,6 +12,8 @@
 
 namespace MSP430 {
 
+
+
 struct channelconfig
 {
 	unsigned address : 6;

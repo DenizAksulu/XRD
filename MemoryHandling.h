@@ -30,6 +30,8 @@ unsigned char UpdateSystemInfo(unsigned char* RTC_AsCharArray, Operation_Mode La
 unsigned char AddRawData(unsigned char* RawData, unsigned int DataLength, unsigned long FileNumber);
 unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsigned long Offset, unsigned long FileNumber);
 unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[100] , unsigned long SpectrumSingleNumber);
+unsigned long GetRawDataFileLength(unsigned long RawDataNumber);
+unsigned long GetSpectrumDataFileLength(unsigned long SpectrumSingleNumber);
 unsigned char ReportEvent(StatusReports report);
 /*
  *

@@ -26,6 +26,8 @@ SPI.obj: ../integer.h
 SPI.obj: ../ffconf.h
 SPI.obj: ../diskio.h
 SPI.obj: ../MemoryHandling.h
+SPI.obj: ../I2C.h
+SPI.obj: ../pulsar.h
 SPI.obj: ../pulsar.h
 
 ../SPI.cpp: 
@@ -54,4 +56,6 @@ c:/ti/ccsv6/tools/compiler/msp430_4.3.3/include/stdint.h:
 ../ffconf.h: 
 ../diskio.h: 
 ../MemoryHandling.h: 
+../I2C.h: 
+../pulsar.h: 
 ../pulsar.h: 

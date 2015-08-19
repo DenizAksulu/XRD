@@ -20,6 +20,7 @@ pulsar ACQ((unsigned char*)&P8OUT, 16, 0); //deðiþti
 
 pulsar ENABLE_5V((unsigned char*)&P2OUT, 8, 0);		//BAÞLANGIÇ DURUMUNA DÝKKAT ET
 pulsar ENABLE_HV((unsigned char*)&P5OUT, 16, 0); // Pin Numaralarý deðiþecek!!
+pulsar ENABLE_HV_POWER((unsigned char*)&P10OUT, 1, 0); // Pin Numaralarý deðiþecek!!
 pulsar ENABLE_ADC((unsigned char*)&P6OUT, 32, 0); // Pin Numaralarý deðiþecek!
 pulsar TEST((unsigned char*)&P2OUT, 1, 0); // Pin Numaralarý deðiþecek!
 
@@ -48,6 +49,8 @@ Timer ADCACQTimer(TimerA0, &ADCACQTimerInterrupt);
 
 rena RENA;
 
+I2C OBC(UCB0, &OBC_Handler);
+
 UART pc(UCA0, 115200, &CommandVector);
 unsigned int SpectrumData[36][NUMBER_OF_ENERGY_INTERVALS] = {};
 double SpectrumInterval = (MAX_ENERGY_LEVEL - MIN_ENERGY_LEVEL) / NUMBER_OF_ENERGY_INTERVALS;
@@ -66,6 +69,7 @@ unsigned long SpectrumSingleNumber = 0;
 unsigned long SpectrumDoubleNumber = 0;
 unsigned long ConfigNumber = 0;
 /*
+ *
  *
  */
 
@@ -164,7 +168,7 @@ int main(void)
 	/*
 	 *
 	 */
-	CurrentOperationMode = DataProcessing;
+	//CurrentOperationMode = DataProcessing;
 	while(1)
 	{
 		UARTCommandHandler(CurrentUARTMode);
@@ -181,12 +185,18 @@ void RunOperationMode(Operation_Mode mode)
 	case Idle:
 		/* Pinler doðru olmayabilir!!*/
 		ENABLE_HV.set(0); // Disable HV
-		ENABLE_ADC.set(0); // Disable ADC
-		ENABLE_5V.set(1); // Disable 5V
+		ENABLE_HV_POWER.set(0); // Disable HV
+		//ENABLE_HV.set(1); // Disable HV
+		//ENABLE_HV_POWER.set(1); // Disable HV
+		//ENABLE_5V.set(0); // Disable 5V
 		//__bis_SR_register(LPM4_bits); // Sleep
 		break;
 	case Diagnostic:
 		ENABLE_5V.set(1); // Enable 5V
+		/*
+		 *	ADC silinecek.
+		 *
+		 */
 		while(ADC_CheckConter--) // decrease the counter
 		{
 			ENABLE_ADC.set(1); // Enable ADC
@@ -245,6 +255,9 @@ void RunOperationMode(Operation_Mode mode)
 			CLS.set(0);
 			while(!ACQCompleted && CurrentOperationMode == DataAcquisition)
 			{
+				/*
+				 * In case TS gets stuck
+				 */
 				if(!TS1.get())
 				{
 					CLS.set(1);
@@ -274,7 +287,7 @@ void RunOperationMode(Operation_Mode mode)
 					if(HitBuffer[n + 108*m] == 1)
 					{
 						ADCVoltage = (HitBuffer[108*m + 36 + NumberOfTriggeredChannels*2] + 256*HitBuffer[108*m + 36 + NumberOfTriggeredChannels*2 + 1]);
-						SpectrumData[n][(unsigned int)(ConvertToEnergyAnode(ADCVoltage)/SpectrumInterval)]++;
+						SpectrumData[n][(unsigned int)(ConvertToEnergyAnode(ADCVoltage, n)/SpectrumInterval)]++;
 						NumberOfTriggeredChannels++;
 					}
 				}
@@ -486,6 +499,12 @@ void TS_Interrupt(void)
 			ACQ.set(1);
 			READ.set(1);
 			CLS.set(0);
+			/*
+			 *
+			 * Must be reported!!
+			 * Error Counter should be increased
+			 *
+			 */
 			__bis_SR_register(GIE);
 			return;
 		}
@@ -526,6 +545,77 @@ void TS_Interrupt(void)
 		CLS.set(0);
 		__bis_SR_register(GIE);
 		return;
+	}
+}
+
+unsigned char RawDataFileNumberChar[4];
+unsigned char SpectrumDataFileNumberChar[4];
+unsigned char RawDataOffsetNumberChar[4];
+unsigned char SpectrumDataOffsetNumberChar[4];
+unsigned char RawDataLengthNumberChar[4];
+unsigned char SpectrumDataLengthNumberChar[4];
+unsigned long CommandFileNumber = 0;
+unsigned long CommandOffsetNumber = 0;
+unsigned long CommandLengthNumber = 0;
+void OBC_Handler(unsigned char* Data, unsigned int Length)
+{
+	switch(Data[0])
+	{
+	case 0x01: // Get version command
+		ReceivedData[0] = 0x48;
+		OBC.Send(ReceivedData);
+		break;
+	case 0x02: // Change Mode command
+		switch(Data[1])
+		{
+		case 0x01: // Idle
+			CurrentOperationMode = Idle;
+			break;
+		case 0x02: // Diagnostic
+			CurrentOperationMode = Diagnostic;
+			break;
+		case 0x03: // Data Acquisition
+			CurrentOperationMode = DataAcquisition;
+			break;
+		}
+		break;
+	case 0x03: // Get Mode command
+		ReceivedData[0] = CurrentOperationMode + 1;
+		OBC.Send(ReceivedData);
+		break;
+	case 0x04: // Get Raw Data number command
+		*(unsigned long*)RawDataFileNumberChar = RawDataNumber;
+		OBC.Send(RawDataFileNumberChar);
+		break;
+	case 0x05: // Get Spectrum Data number command
+		*(unsigned long*)SpectrumDataFileNumberChar = SpectrumSingleNumber;
+		OBC.Send(SpectrumDataFileNumberChar);
+		break;
+	case 0x06: // Get Length of Raw Data file command
+		CommandFileNumber = Data[1] + (Data[2] << 8) +
+				((unsigned long)Data[3] << 16) + ((unsigned long)Data[4] << 24);
+		*(unsigned long*)RawDataLengthNumberChar = GetRawDataFileLength(CommandFileNumber);
+		OBC.Send(RawDataLengthNumberChar);
+		break;
+	case 0x07: // Get Length of Spectrum Data file command
+		CommandFileNumber = Data[1] + (Data[2] << 8) +
+				((unsigned long)Data[3] << 16) + ((unsigned long)Data[4] << 24);
+		*(unsigned long*)SpectrumDataLengthNumberChar = GetRawDataFileLength(CommandFileNumber);
+		OBC.Send(SpectrumDataLengthNumberChar);
+		break;
+	case 0x08: // Get Raw Data command
+		// First 4 bytes = raw data number
+		CommandFileNumber = Data[1] + (Data[2] << 8) +
+				((unsigned long)Data[3] << 16) + (unsigned long)((unsigned long)Data[4] << 24);
+		// Next 4 bytes = offset
+		CommandOffsetNumber = Data[5] + (Data[6] << 8) +
+				((unsigned long)Data[7] << 16) + ((unsigned long)Data[8] << 24);
+		// Next 4 bytes = length (MAX: 256)
+		CommandLengthNumber = Data[9] + (Data[10] << 8) +
+				((unsigned long)Data[11] << 16) + ((unsigned long)Data[12] << 24);
+		while(!ReadRawData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, CommandFileNumber));
+		OBC.Send(ReceivedData);
+		break;
 	}
 }
 

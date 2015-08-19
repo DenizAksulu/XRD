@@ -26,6 +26,8 @@ AD9243.obj: ../integer.h
 AD9243.obj: ../ffconf.h
 AD9243.obj: ../diskio.h
 AD9243.obj: ../MemoryHandling.h
+AD9243.obj: ../I2C.h
+AD9243.obj: ../pulsar.h
 AD9243.obj: ../pulsar.h
 
 ../AD9243.cpp: 
@@ -54,4 +56,6 @@ c:/ti/ccsv6/tools/compiler/msp430_4.3.3/include/stdint.h:
 ../ffconf.h: 
 ../diskio.h: 
 ../MemoryHandling.h: 
+../I2C.h: 
+../pulsar.h: 
 ../pulsar.h: 

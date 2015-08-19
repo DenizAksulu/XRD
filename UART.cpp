@@ -200,10 +200,10 @@ namespace MSP430
 				{
 					if((DataBuffer[TotalData - 1] == 'D') && (DataBuffer[TotalData - 2] == 'N') && (DataBuffer[TotalData - 3] == 'E'))
 					{
+						__bic_SR_register_on_exit(LPM4_bits);
 						CommandVector(UART_Phase, DataBuffer, TotalData);
 						UART_Phase = 1;
 						DataCounter = 0;
-						__bic_SR_register_on_exit(LPM4_bits);
 					}
 					else
 					{

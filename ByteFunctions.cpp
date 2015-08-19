@@ -64,12 +64,12 @@ void UlToStr(char *s, unsigned long bin, unsigned char n)
    }
 }
 
-double ConvertToEnergyAnode(double ADCValue)
+double ConvertToEnergyAnode(double ADCValue, unsigned char ChannelNumber)
 {
-	double x = 20.34*ADCValue + 7.45;
+	double x = MultiplierCoefficientsAnode[ChannelNumber]*ADCValue + AddingCoefficientsAnode[ChannelNumber];
 	return x;
 }
-double ConvertToEnergyCathode(double ADCValue)
+double ConvertToEnergyCathode(double ADCValue, unsigned char ChannelNumber)
 {
 	double x = 20.34*ADCValue + 7.45;
 	return x;

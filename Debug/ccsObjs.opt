@@ -1,1 +1,1 @@
-"./AD9243.obj" "./ADC.obj" "./ByteFunctions.obj" "./HAL_SDCard.obj" "./MemoryHandling.obj" "./RTC.obj" "./SPI.obj" "./Timer.obj" "./UART.obj" "./ff.obj" "./main.obj" "./mmc.obj" "./pre_init.obj" "./pulsar.obj" "./rena.obj" "../lnk_msp430f5438a.cmd" -l"libc.a" -l"libmath.a" 
+"./AD9243.obj" "./ADC.obj" "./ByteFunctions.obj" "./HAL_SDCard.obj" "./I2C.obj" "./MemoryHandling.obj" "./RTC.obj" "./SPI.obj" "./Timer.obj" "./UART.obj" "./ff.obj" "./main.obj" "./mmc.obj" "./pre_init.obj" "./pulsar.obj" "./rena.obj" "../lnk_msp430f5438a.cmd" -l"libc.a" -l"libmath.a" 

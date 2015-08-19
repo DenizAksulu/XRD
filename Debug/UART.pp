@@ -26,6 +26,8 @@ UART.obj: ../integer.h
 UART.obj: ../ffconf.h
 UART.obj: ../diskio.h
 UART.obj: ../MemoryHandling.h
+UART.obj: ../I2C.h
+UART.obj: ../pulsar.h
 
 ../UART.cpp: 
 ../UART.h: 
@@ -53,3 +55,5 @@ c:/ti/ccsv6/tools/compiler/msp430_4.3.3/include/stdint.h:
 ../ffconf.h: 
 ../diskio.h: 
 ../MemoryHandling.h: 
+../I2C.h: 
+../pulsar.h: 

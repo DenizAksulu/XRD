@@ -22,6 +22,7 @@
 #include "ff.h"
 #include "diskio.h"
 #include "MemoryHandling.h"
+#include "I2C.h"
 
 #define CLOCK_DELAY 25000
 
@@ -39,6 +40,7 @@
 void delay(unsigned int );
 void ADCACQTimerInterrupt();
 void CommandVector(unsigned char Phase, unsigned char* Data, unsigned int Length);
+void OBC_Handler(unsigned char* Data, unsigned int Length);
 void RTCSecondInterrupt();
 void RunOperationMode(Operation_Mode mode);
 /*

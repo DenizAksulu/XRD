@@ -25,6 +25,8 @@ MemoryHandling.obj: ../pulsar.h
 MemoryHandling.obj: ../Timer.h
 MemoryHandling.obj: ../RTC.h
 MemoryHandling.obj: ../diskio.h
+MemoryHandling.obj: ../I2C.h
+MemoryHandling.obj: ../pulsar.h
 
 ../MemoryHandling.cpp: 
 ../MemoryHandling.h: 
@@ -51,3 +53,5 @@ c:/ti/ccsv6/tools/compiler/msp430_4.3.3/include/stdint.h:
 ../Timer.h: 
 ../RTC.h: 
 ../diskio.h: 
+../I2C.h: 
+../pulsar.h: 
