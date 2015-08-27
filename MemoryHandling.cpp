@@ -205,6 +205,34 @@ unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsig
 	return 1;
 }
 
+unsigned char ReadSpectrumData(unsigned char* RawData, unsigned int DataLength, unsigned long Offset, unsigned long FileNumber)
+{
+	unsigned char index = 0;
+	unsigned int bytesread = 0;
+
+	char FileName[14];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, FileNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 's';
+	FileName[index++] = 'p';
+	FileName[index++] = 's';
+	FileName[index++] = '\0';
+
+	if(f_open(&file, FileName, FA_READ) != FR_OK) return 0;
+	if(f_lseek(&file, Offset) != FR_OK) return 0;
+
+	if(f_read(&file, RawData, DataLength, &bytesread) != FR_OK) return 0;
+
+	if(f_close(&file) != FR_OK) return 0;
+	return 1;
+}
+
 unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERGY_INTERVALS] , unsigned long FileNumber)
 {
 	/*Adjusting File Name*/
@@ -226,7 +254,7 @@ unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERG
 	FileName[index++] = 's';
 	FileName[index++] = '\0';
 
-	for(int i = 0; i < 36; i++)
+	for(int i = 0; i < 15; i++)
 	{
 		/**/
 		for(int j = 0; j < NUMBER_OF_ENERGY_INTERVALS; j++)
@@ -249,6 +277,49 @@ unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERG
 	return 1;
 }
 
+unsigned char AddSpectrumDoubleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERGY_INTERVALS] , unsigned long FileNumber)
+{
+	/*Adjusting File Name*/
+	unsigned char SpectrumDataChar[NUMBER_OF_ENERGY_INTERVALS * 2] = {0};
+	unsigned char SpectrumCHAR[2];
+	unsigned int byteswritten = 0;
+	unsigned char index = 0;
+	char FileName[11];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, FileNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 's';
+	FileName[index++] = 'p';
+	FileName[index++] = 'd';
+	FileName[index++] = '\0';
+
+	for(int i = 0; i < 15; i++)
+	{
+		/**/
+		for(int j = 0; j < NUMBER_OF_ENERGY_INTERVALS; j++)
+		{
+			*(unsigned int*)SpectrumCHAR = SpectrumData[i][j];
+			SpectrumDataChar[2*j] = SpectrumCHAR[0];
+			SpectrumDataChar[2*j + 1] = SpectrumCHAR[1];
+		}
+		/**/
+		/*Open File*/
+		if(f_open(&file, FileName, FA_OPEN_ALWAYS | FA_WRITE) != FR_OK) return 0;
+		/**/
+		/*Write into File*/
+		DWORD FileLength = f_size(&file);
+		if(f_lseek(&file, FileLength) != FR_OK) return 0;
+		if(f_write(&file, SpectrumDataChar, NUMBER_OF_ENERGY_INTERVALS*2, &byteswritten) != FR_OK) return 0;
+		/**/
+		if(f_close(&file) != FR_OK) return 0;
+	}
+	return 1;
+}
 unsigned char ReportEvent(StatusReports report)
 {
 	unsigned char index = 0;
@@ -272,6 +343,39 @@ unsigned char ReportEvent(StatusReports report)
 	DWORD FileLength = f_size(&file);
 	if(f_lseek(&file, FileLength) != FR_OK) return 0;
 	if(f_write(&file, Report, 15, &byteswritten) != FR_OK) return 0;
+	/**/
+	if(f_close(&file) != FR_OK) return 0;
+	return 1;
+}
+
+unsigned char ReportEvent(StatusReports report, unsigned long EventNumber)
+{
+	unsigned char index = 0;
+	unsigned char RTC_AsCharArray[14];
+	unsigned char CharEventNumber[4];
+	unsigned char Report[19] = {};
+	*(unsigned long*)CharEventNumber = EventNumber;
+	getRTCasByteArray(RTC_AsCharArray);
+	for(int i = 0; i < 14; i++)
+	{
+		Report[index++] = RTC_AsCharArray[i];
+	}
+
+	Report[index++] = report;
+	Report[index++] = CharEventNumber[0];
+	Report[index++] = CharEventNumber[1];
+	Report[index++] = CharEventNumber[2];
+	Report[index++] = CharEventNumber[3];
+	/*Adjusting File Name*/
+	unsigned int byteswritten = 0;
+	/**/
+	/*Open File*/
+	if(f_open(&file, "REPORTS.sys", FA_OPEN_ALWAYS | FA_WRITE) != FR_OK) return 0;
+	/**/
+	/*Write into File*/
+	DWORD FileLength = f_size(&file);
+	if(f_lseek(&file, FileLength) != FR_OK) return 0;
+	if(f_write(&file, Report, 19, &byteswritten) != FR_OK) return 0;
 	/**/
 	if(f_close(&file) != FR_OK) return 0;
 	return 1;

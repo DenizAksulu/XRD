@@ -27,9 +27,9 @@
 #define CLOCK_DELAY 25000
 
 /*Spectrum Parameters*/
-#define MAX_ENERGY_LEVEL 83300//4095
+#define MAX_ENERGY_LEVEL 200000//4095
 #define MIN_ENERGY_LEVEL 0
-#define NUMBER_OF_ENERGY_INTERVALS 100 //100
+#define NUMBER_OF_ENERGY_INTERVALS 100 // Also Checkout MemoryHandling.h file!!!!!! IMPORTANT!
 
 #define RAW_DATA_HIT_NUMBER 5
 #define SPECTRUM_DATA_HIT_NUMBER 60000

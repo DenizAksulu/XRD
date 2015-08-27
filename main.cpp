@@ -20,7 +20,7 @@ pulsar ACQ((unsigned char*)&P8OUT, 16, 0); //deðiþti
 
 pulsar ENABLE_5V((unsigned char*)&P2OUT, 8, 0);		//BAÞLANGIÇ DURUMUNA DÝKKAT ET
 pulsar ENABLE_HV((unsigned char*)&P5OUT, 16, 0); // Pin Numaralarý deðiþecek!!
-pulsar ENABLE_HV_POWER((unsigned char*)&P10OUT, 1, 0); // Pin Numaralarý deðiþecek!!
+pulsar ENABLE_HV_POWER((unsigned char*)&P10OUT, 4, 1); // Pin Numaralarý deðiþecek!!
 pulsar ENABLE_ADC((unsigned char*)&P6OUT, 32, 0); // Pin Numaralarý deðiþecek!
 pulsar TEST((unsigned char*)&P2OUT, 1, 0); // Pin Numaralarý deðiþecek!
 
@@ -52,9 +52,10 @@ rena RENA;
 I2C OBC(UCB0, &OBC_Handler);
 
 UART pc(UCA0, 115200, &CommandVector);
-unsigned int SpectrumData[36][NUMBER_OF_ENERGY_INTERVALS] = {};
 double SpectrumInterval = (MAX_ENERGY_LEVEL - MIN_ENERGY_LEVEL) / NUMBER_OF_ENERGY_INTERVALS;
 
+unsigned int SingleSpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
+unsigned int DoubleSpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
 /*
  * System Info Variables
  */
@@ -72,7 +73,6 @@ unsigned long ConfigNumber = 0;
  *
  *
  */
-
 int main(void)
 {
 	/*
@@ -99,7 +99,7 @@ int main(void)
 				RTC_AsCharArray[10] + 256*RTC_AsCharArray[11],
 				RTC_AsCharArray[12] + 256*RTC_AsCharArray[13]);
 	}
-	enableSec(&RTCSecondInterrupt);
+	//enableSec(&RTCSecondInterrupt); Canceled...
 	startRTC();
 
 	/*
@@ -117,30 +117,9 @@ int main(void)
 	/*
 	 * Configure RENA
 	 */
-	/*if(ConfigNumber == 0)
+	/*(ConfigNumber == 0)
 	{
-		for(int i = 0; i < 1; i++)
-		{
-			ChannelConfigs[i].DF = 0;
-			ChannelConfigs[i].DS = 150;
-			ChannelConfigs[i].ECAL = 1;
-			ChannelConfigs[i].ENF = 0;
-			ChannelConfigs[i].ENS = 1;
-			ChannelConfigs[i].FB_TC = 0;
-			ChannelConfigs[i].FETSEL = 0;
-			ChannelConfigs[i].FM = 0;
-			ChannelConfigs[i].FPDWN = 1;
-			ChannelConfigs[i].PDWN = 0;
-			ChannelConfigs[i].POL = 1;
-			ChannelConfigs[i].PZSEL = 0;
-			ChannelConfigs[i].RANGE = 0;
-			ChannelConfigs[i].RSEL = 0;
-			ChannelConfigs[i].SEL = 13;
-			ChannelConfigs[i].SIZEA = 0;
-			ChannelConfigs[i].address = i;
-			ChannelConfigs[i].gainselect = 3;
-		}
-		for(int i = 1; i < 36; i++)
+		for(int i = 0; i < 36; i++)
 		{
 			ChannelConfigs[i].DF = 0;
 			ChannelConfigs[i].DS = 60;
@@ -161,6 +140,48 @@ int main(void)
 			ChannelConfigs[i].address = i;
 			ChannelConfigs[i].gainselect = 3;
 		}
+		for(int i = 11; i < 13; i++)
+		{
+			ChannelConfigs[i].DF = 0;
+			ChannelConfigs[i].DS = 160;
+			ChannelConfigs[i].ECAL = 1;
+			ChannelConfigs[i].ENF = 0;
+			ChannelConfigs[i].ENS = 1;
+			ChannelConfigs[i].FB_TC = 0;
+			ChannelConfigs[i].FETSEL = 0;
+			ChannelConfigs[i].FM = 0;
+			ChannelConfigs[i].FPDWN = 1;
+			ChannelConfigs[i].PDWN = 0;
+			ChannelConfigs[i].POL = 1;
+			ChannelConfigs[i].PZSEL = 0;
+			ChannelConfigs[i].RANGE = 0;
+			ChannelConfigs[i].RSEL = 0;
+			ChannelConfigs[i].SEL = 13;
+			ChannelConfigs[i].SIZEA = 0;
+			ChannelConfigs[i].address = i;
+			ChannelConfigs[i].gainselect = 3;
+		}
+		for(int i = 25; i < 29; i++)
+		{
+			ChannelConfigs[i].DF = 0;
+			ChannelConfigs[i].DS = 160;
+			ChannelConfigs[i].ECAL = 1;
+			ChannelConfigs[i].ENF = 0;
+			ChannelConfigs[i].ENS = 1;
+			ChannelConfigs[i].FB_TC = 0;
+			ChannelConfigs[i].FETSEL = 0;
+			ChannelConfigs[i].FM = 0;
+			ChannelConfigs[i].FPDWN = 1;
+			ChannelConfigs[i].PDWN = 0;
+			ChannelConfigs[i].POL = 1;
+			ChannelConfigs[i].PZSEL = 0;
+			ChannelConfigs[i].RANGE = 0;
+			ChannelConfigs[i].RSEL = 0;
+			ChannelConfigs[i].SEL = 13;
+			ChannelConfigs[i].SIZEA = 0;
+			ChannelConfigs[i].address = i;
+			ChannelConfigs[i].gainselect = 3;
+		}
 		RENA.ConfigureRena(ChannelConfigs, 36, CIN, CSHIFT, CS);
 	}
 
@@ -168,7 +189,7 @@ int main(void)
 	/*
 	 *
 	 */
-	//CurrentOperationMode = DataProcessing;
+	//CurrentOperationMode = DataAcquisition;
 	while(1)
 	{
 		UARTCommandHandler(CurrentUARTMode);
@@ -183,12 +204,7 @@ void RunOperationMode(Operation_Mode mode)
 	switch(mode)
 	{
 	case Idle:
-		/* Pinler doðru olmayabilir!!*/
-		ENABLE_HV.set(0); // Disable HV
 		ENABLE_HV_POWER.set(0); // Disable HV
-		//ENABLE_HV.set(1); // Disable HV
-		//ENABLE_HV_POWER.set(1); // Disable HV
-		//ENABLE_5V.set(0); // Disable 5V
 		//__bis_SR_register(LPM4_bits); // Sleep
 		break;
 	case Diagnostic:
@@ -245,7 +261,6 @@ void RunOperationMode(Operation_Mode mode)
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	case DataAcquisition:
-		disableSec();
 		for(int i = 0; i < 100; i++)
 		{
 			CLS.set(1);
@@ -271,30 +286,136 @@ void RunOperationMode(Operation_Mode mode)
 			while(!AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber));
 		}
 		RawDataNumber++;
-		enableSec(&RTCSecondInterrupt);
 		CurrentOperationMode = DataProcessing; // Set CurrentOperationMode to Idle
 		break;
 	case DataProcessing:
+		unsigned long MultipleAnodesEventNumber = 0;
+		unsigned long MultipleCathodesEventNumber = 0;
+		unsigned long CathodeOnlyEventNumber = 0;
+		unsigned long AnodeOnlyEventNumber = 0;
 		for(int i = 0; i < 100; i++)
 		{
 			while(!ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, SpectrumSingleNumber));
 			for(int m = 0; m < RAW_DATA_HIT_NUMBER; m++)
 			{
 				int NumberOfTriggeredChannels = 0;
+				int NumberOfTriggeredAnodes = 0;
+				int NumberOfTriggeredCathodes = 0;
 				unsigned int ADCVoltage = 0;
-				for(int n = 0; n < 36; n++)
+				unsigned int DoubleADCVoltage[2] = {0};
+				double DoubleEnergyLevel[2] = {0};
+				double EnergyLevel = 0;
+				unsigned char n_counter = 0;
+				for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
 				{
-					if(HitBuffer[n + 108*m] == 1)
+					if(HitBuffer[n_counter + 108*m] == 1)
 					{
-						ADCVoltage = (HitBuffer[108*m + 36 + NumberOfTriggeredChannels*2] + 256*HitBuffer[108*m + 36 + NumberOfTriggeredChannels*2 + 1]);
-						SpectrumData[n][(unsigned int)(ConvertToEnergyAnode(ADCVoltage, n)/SpectrumInterval)]++;
+						NumberOfTriggeredAnodes++;
+					}
+				}
+				for(n_counter = 1; n_counter < 15; n_counter++) // Check Cathodes
+				{
+					if(HitBuffer[n_counter + 108*m] == 1)
+					{
+						NumberOfTriggeredCathodes++;
+					}
+				}
+				for(n_counter = 1; n_counter < 35; n_counter++) // Check All channels
+				{
+					if(HitBuffer[n_counter + 108*m] == 1)
+					{
 						NumberOfTriggeredChannels++;
 					}
 				}
+				/*Single Spectrum Case*/
+				if(NumberOfTriggeredAnodes == 1 && (NumberOfTriggeredCathodes > 0 && NumberOfTriggeredCathodes < 4))
+				{
+					for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
+					{
+						if(HitBuffer[n_counter + 108*m] == 1)
+						{
+							ADCVoltage = (HitBuffer[108*m + 36 + (NumberOfTriggeredChannels-1)*2] + 256*HitBuffer[108*m + 36 + (NumberOfTriggeredChannels-1)*2 + 1]);
+							EnergyLevel = ConvertToEnergyAnode(ADCVoltage, 35 - n_counter);
+							SingleSpectrumData[34 - n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
+						}
+					}
+				}
+				/*Double Spectrum Case*/
+				else if(NumberOfTriggeredAnodes == 2 && (NumberOfTriggeredCathodes > 0 && NumberOfTriggeredCathodes < 4))
+				{
+					unsigned char index = 0;
+					for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
+					{
+						if(HitBuffer[n_counter + 108*m] == 1)
+						{
+							index++;
+							DoubleADCVoltage[index - 1] = (HitBuffer[108*m + 36 + (NumberOfTriggeredChannels - index)*2] + 256*HitBuffer[108*m + 36 + (NumberOfTriggeredChannels - index)*2 + 1]);
+						}
+					}
+					index = 0;
+					if(DoubleADCVoltage[0] >= DoubleADCVoltage[1])
+					{
+						for(n_counter = 34; n_counter > 18; n_counter--) // Check Anodes
+						{
+							if(HitBuffer[n_counter + 108*m] == 1)
+							{
+								DoubleEnergyLevel[0] = ConvertToEnergyAnode(DoubleADCVoltage[0], (35 - n_counter));
+								DoubleEnergyLevel[1] = ConvertToEnergyAnode(DoubleADCVoltage[1], (35 - n_counter));
+								EnergyLevel = DoubleEnergyLevel[0] + DoubleEnergyLevel[1];
+								DoubleSpectrumData[34 - n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
+								break;
+							}
+						}
+					}
+					else
+					{
+						for(n_counter = 34; n_counter > 18; n_counter--) // Check Anodes
+						{
+							if(HitBuffer[n_counter + 108*m] == 1)
+							{
+								index++;
+								if(index == 2)
+								{
+									DoubleEnergyLevel[0] = ConvertToEnergyAnode(DoubleADCVoltage[0], 35 - n_counter);
+									DoubleEnergyLevel[1] = ConvertToEnergyAnode(DoubleADCVoltage[1], 35 - n_counter);
+									EnergyLevel = DoubleEnergyLevel[0] + DoubleEnergyLevel[1];
+									DoubleSpectrumData[34 - n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
+									break;
+								}
+							}
+						}
+					}
+				}
+				/*Multiple Events Report*/
+				else if(NumberOfTriggeredAnodes > 2)
+					MultipleAnodesEventNumber++;
+				/*Cathodes only Report*/
+				else if(NumberOfTriggeredAnodes == 0)
+					CathodeOnlyEventNumber++;
+				/*Anodes only Report*/
+				else if(NumberOfTriggeredCathodes == 0)
+					AnodeOnlyEventNumber++;
+				else
+					MultipleCathodesEventNumber++;
 			}
 		}
-		while(!AddSpectrumSingleData(SpectrumData, SpectrumSingleNumber));
+		while(!AddSpectrumSingleData(SingleSpectrumData, SpectrumSingleNumber));
 		SpectrumSingleNumber++;
+		while(!AddSpectrumDoubleData(DoubleSpectrumData, SpectrumDoubleNumber));
+		SpectrumDoubleNumber++;
+
+		if(MultipleAnodesEventNumber != 0)
+			while(!ReportEvent(MultipleAnodes, MultipleAnodesEventNumber));
+		if(MultipleAnodesEventNumber != 0)
+			while(!ReportEvent(MultipleCathodes, MultipleCathodesEventNumber));
+		if(CathodeOnlyEventNumber != 0)
+			while(!ReportEvent(CathodeOnly, CathodeOnlyEventNumber));
+		if(AnodeOnlyEventNumber != 0)
+			while(!ReportEvent(AnodeOnly, AnodeOnlyEventNumber));
+
+		getRTCasByteArray(RTC_AsCharArray);
+		UpdateSystemInfo(RTC_AsCharArray, LastOperationMode, ExecutionNumber, WDTNumber,
+				      RawDataNumber, SpectrumSingleNumber, SpectrumDoubleNumber, ConfigNumber);
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	}
@@ -514,11 +635,8 @@ void TS_Interrupt(void)
 		for(unsigned int j = 0; j < NumberOfTriggeredChannels; j++)
 		{
 			*(unsigned int*)adcvalue = adc.SingleReadValue(Channel5);
-			if(RawDataNumber == 0)
-			{
-				HitBuffer[HitNumber*108 + 36 + 2*j] = adcvalue[0];
-				HitBuffer[HitNumber*108 + 36 + 2*j + 1] = adcvalue[1];
-			}
+			HitBuffer[HitNumber*108 + 36 + 2*j] = adcvalue[0];
+			HitBuffer[HitNumber*108 + 36 + 2*j + 1] = adcvalue[1];
 			TCLK.set(!TCLK.get());
 			TCLK.set(!TCLK.get());
 		}
@@ -600,7 +718,7 @@ void OBC_Handler(unsigned char* Data, unsigned int Length)
 	case 0x07: // Get Length of Spectrum Data file command
 		CommandFileNumber = Data[1] + (Data[2] << 8) +
 				((unsigned long)Data[3] << 16) + ((unsigned long)Data[4] << 24);
-		*(unsigned long*)SpectrumDataLengthNumberChar = GetRawDataFileLength(CommandFileNumber);
+		*(unsigned long*)SpectrumDataLengthNumberChar = GetSpectrumDataFileLength(CommandFileNumber);
 		OBC.Send(SpectrumDataLengthNumberChar);
 		break;
 	case 0x08: // Get Raw Data command
@@ -614,6 +732,19 @@ void OBC_Handler(unsigned char* Data, unsigned int Length)
 		CommandLengthNumber = Data[9] + (Data[10] << 8) +
 				((unsigned long)Data[11] << 16) + ((unsigned long)Data[12] << 24);
 		while(!ReadRawData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, CommandFileNumber));
+		OBC.Send(ReceivedData);
+		break;
+	case 0x09: // Get Spectrum Data command
+		// First 4 bytes = raw data number
+		CommandFileNumber = Data[1] + (Data[2] << 8) +
+				((unsigned long)Data[3] << 16) + (unsigned long)((unsigned long)Data[4] << 24);
+		// Next 4 bytes = offset
+		CommandOffsetNumber = Data[5] + (Data[6] << 8) +
+				((unsigned long)Data[7] << 16) + ((unsigned long)Data[8] << 24);
+		// Next 4 bytes = length (MAX: 256)
+		CommandLengthNumber = Data[9] + (Data[10] << 8) +
+				((unsigned long)Data[11] << 16) + ((unsigned long)Data[12] << 24);
+		while(!ReadSpectrumData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, CommandFileNumber));
 		OBC.Send(ReceivedData);
 		break;
 	}
