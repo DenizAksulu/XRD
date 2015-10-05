@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker PC v4.3.3                      
 ******************************************************************************
->> Linked Fri Oct 02 12:58:48 2015
+>> Linked Mon Oct 05 15:06:09 2015
 
 OUTPUT FILE NAME:   <XRD.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 00005e90
@@ -18,7 +18,7 @@ MEMORY CONFIGURATION
   INFOC                 00001880   00000080  00000000  00000080  RWIX
   INFOB                 00001900   00000080  00000000  00000080  RWIX
   INFOA                 00001980   00000080  00000000  00000080  RWIX
-  RAM                   00001c00   00004000  00002b59  000014a7  RWIX
+  RAM                   00001c00   00004000  00002b61  0000149f  RWIX
   FLASH                 00005c00   0000a380  00000600  00009d80  RWIX
   INT00                 0000ff80   00000002  00000000  00000002  RWIX
   INT01                 0000ff82   00000002  00000000  00000002  RWIX
@@ -84,7 +84,7 @@ MEMORY CONFIGURATION
   INT61                 0000fffa   00000002  00000002  00000000  RWIX
   INT62                 0000fffc   00000002  00000002  00000000  RWIX
   RESET                 0000fffe   00000002  00000002  00000000  RWIX
-  FLASH2                00010000   00035c00  000077c6  0002e43a  RWIX
+  FLASH2                00010000   00035c00  000078d2  0002e32e  RWIX
 
 
 SECTION ALLOCATION MAP
@@ -92,71 +92,71 @@ SECTION ALLOCATION MAP
  output                                  attributes/
 section   page    origin      length       input sections
 --------  ----  ----------  ----------   ----------------
-.data      0    00001c00    00001c9c     UNINITIALIZED
+.data      0    00001c00    00001ca4     UNINITIALIZED
                   00001c00    00000bb8     main.obj (.data:DoubleSpectrumData)
                   000027b8    00000bb8     main.obj (.data:SingleSpectrumData)
                   00003370    000004b0     main.obj (.data:LightCurve)
-                  00003820    00000038     main.obj (.data)
-                  00003858    00000016     Timer.obj (.data)
-                  0000386e    0000000e     main.obj (.data:RTC_AsCharArray)
-                  0000387c    00000009     UART.obj (.data)
-                  00003885    00000001     --HOLE--
-                  00003886    00000008     rts430x_lc_rd_eabi.lib : _lock.obj (.data)
-                  0000388e    00000004     ADC.obj (.data)
-                  00003892    00000004     rts430x_lc_rd_eabi.lib : dtor_list.obj (.data)
-                  00003896    00000002     I2C.obj (.data)
-                  00003898    00000002     mmc.obj (.data)
-                  0000389a    00000002     rts430x_lc_rd_eabi.lib : memory.obj (.data)
+                  00003820    00000040     main.obj (.data)
+                  00003860    00000016     Timer.obj (.data)
+                  00003876    0000000e     main.obj (.data:RTC_AsCharArray)
+                  00003884    00000009     UART.obj (.data)
+                  0000388d    00000001     --HOLE--
+                  0000388e    00000008     rts430x_lc_rd_eabi.lib : _lock.obj (.data)
+                  00003896    00000004     ADC.obj (.data)
+                  0000389a    00000004     rts430x_lc_rd_eabi.lib : dtor_list.obj (.data)
+                  0000389e    00000002     I2C.obj (.data)
+                  000038a0    00000002     mmc.obj (.data)
+                  000038a2    00000002     rts430x_lc_rd_eabi.lib : memory.obj (.data)
 
 .TI.persistent 
 *          0    00001c00    00000000     UNINITIALIZED
 
-.bss       0    0000389c    00000d7d     UNINITIALIZED
-                  0000389c    0000022e     (.common:fatfs)
-                  00003aca    0000021c     (.common:HitBuffer)
-                  00003ce6    00000200     (.common:Packet)
-                  00003ee6    00000200     (.common:ReceivedData)
-                  000040e6    00000200     (.common:_ZN6MSP43010DataBufferE)
-                  000042e6    00000100     (.common:_ZN6MSP4306RxDataE)
-                  000043e6    000000d8     (.common:ChannelConfigs)
-                  000044be    00000092     main.obj (.bss)
-                  00004550    00000024     (.common:TriggeredChannels)
-                  00004574    00000024     (.common:file)
-                  00004598    0000001c     (.common:dir)
-                  000045b4    00000008     (.common:_ZN6MSP43012HeaderBufferE)
-                  000045bc    00000004     (.common:FatFs)
-                  000045c0    00000004     (.common:RawDataFileNumberChar)
-                  000045c4    00000004     (.common:RawDataLengthNumberChar)
-                  000045c8    00000004     (.common:Sec_Callback)
-                  000045cc    00000004     (.common:SpectrumDataFileNumberChar)
-                  000045d0    00000004     (.common:SpectrumDataLengthNumberChar)
-                  000045d4    00000004     (.common:_ZN6MSP43011I2C_RECEIVEE)
-                  000045d8    00000004     (.common:_ZN6MSP43013CommandVectorE)
-                  000045dc    00000004     (.common:_ZN6MSP43016TimerA0InterruptE)
-                  000045e0    00000004     (.common:_ZN6MSP43016TimerA1InterruptE)
-                  000045e4    00000004     (.common:_ZN6MSP43016TimerB0InterruptE)
-                  000045e8    00000004     (.common:_ZN6MSP43018TimerA0_1InterruptE)
-                  000045ec    00000004     (.common:_ZN6MSP43018TimerA1_1InterruptE)
-                  000045f0    00000004     (.common:_ZN6MSP43020interruptVectorPORT2E)
-                  000045f4    00000004     (.common:_ZN6MSP4307PTxDataE)
-                  000045f8    00000004     (.common:__TI_cleanup_ptr)
-                  000045fc    00000004     (.common:__TI_dtors_ptr)
-                  00004600    00000004     (.common:__dso_handle)
-                  00004604    00000004     (.common:rtcAlarm_Callback)
-                  00004608    00000004     (.common:sys_base)
-                  0000460c    00000004     (.common:sys_free)
-                  00004610    00000002     (.common:Fsid)
-                  00004612    00000002     (.common:_ZN6MSP4309CharValueE)
-                  00004614    00000002     (.common:errCode)
-                  00004616    00000002     (.common:memsize)
-                  00004618    00000001     (.common:CardType)
+.bss       0    000038a4    00000d7d     UNINITIALIZED
+                  000038a4    0000022e     (.common:fatfs)
+                  00003ad2    0000021c     (.common:HitBuffer)
+                  00003cee    00000200     (.common:Packet)
+                  00003eee    00000200     (.common:ReceivedData)
+                  000040ee    00000200     (.common:_ZN6MSP43010DataBufferE)
+                  000042ee    00000100     (.common:_ZN6MSP4306RxDataE)
+                  000043ee    000000d8     (.common:ChannelConfigs)
+                  000044c6    00000092     main.obj (.bss)
+                  00004558    00000024     (.common:TriggeredChannels)
+                  0000457c    00000024     (.common:file)
+                  000045a0    0000001c     (.common:dir)
+                  000045bc    00000008     (.common:_ZN6MSP43012HeaderBufferE)
+                  000045c4    00000004     (.common:FatFs)
+                  000045c8    00000004     (.common:RawDataFileNumberChar)
+                  000045cc    00000004     (.common:RawDataLengthNumberChar)
+                  000045d0    00000004     (.common:Sec_Callback)
+                  000045d4    00000004     (.common:SpectrumDataFileNumberChar)
+                  000045d8    00000004     (.common:SpectrumDataLengthNumberChar)
+                  000045dc    00000004     (.common:_ZN6MSP43011I2C_RECEIVEE)
+                  000045e0    00000004     (.common:_ZN6MSP43013CommandVectorE)
+                  000045e4    00000004     (.common:_ZN6MSP43016TimerA0InterruptE)
+                  000045e8    00000004     (.common:_ZN6MSP43016TimerA1InterruptE)
+                  000045ec    00000004     (.common:_ZN6MSP43016TimerB0InterruptE)
+                  000045f0    00000004     (.common:_ZN6MSP43018TimerA0_1InterruptE)
+                  000045f4    00000004     (.common:_ZN6MSP43018TimerA1_1InterruptE)
+                  000045f8    00000004     (.common:_ZN6MSP43020interruptVectorPORT2E)
+                  000045fc    00000004     (.common:_ZN6MSP4307PTxDataE)
+                  00004600    00000004     (.common:__TI_cleanup_ptr)
+                  00004604    00000004     (.common:__TI_dtors_ptr)
+                  00004608    00000004     (.common:__dso_handle)
+                  0000460c    00000004     (.common:rtcAlarm_Callback)
+                  00004610    00000004     (.common:sys_base)
+                  00004614    00000004     (.common:sys_free)
+                  00004618    00000002     (.common:Fsid)
+                  0000461a    00000002     (.common:_ZN6MSP4309CharValueE)
+                  0000461c    00000002     (.common:errCode)
+                  0000461e    00000002     (.common:memsize)
+                  00004620    00000001     (.common:CardType)
 
 .TI.noinit 
-*          0    0000389c    00000000     UNINITIALIZED
+*          0    000038a4    00000000     UNINITIALIZED
 
-.sysmem    0    0000461c    000000a0     UNINITIALIZED
-                  0000461c    00000006     rts430x_lc_rd_eabi.lib : memory.obj (.sysmem)
-                  00004622    0000009a     --HOLE--
+.sysmem    0    00004624    000000a0     UNINITIALIZED
+                  00004624    00000006     rts430x_lc_rd_eabi.lib : memory.obj (.sysmem)
+                  0000462a    0000009a     --HOLE--
 
 .stack     0    00005b60    000000a0     UNINITIALIZED
                   00005b60    00000004     rts430x_lc_rd_eabi.lib : boot.obj (.stack)
@@ -283,166 +283,167 @@ SYSNMI     0    0000fffc    00000002
 .reset     0    0000fffe    00000002     
                   0000fffe    00000002     rts430x_lc_rd_eabi.lib : boot.obj (.reset)
 
-.text      0    00010000    000077c6     
+.text      0    00010000    000078d2     
                   00010000    00000806     main.obj (.text:_Z18UARTCommandHandler9UART_Mode)
-                  00010806    00000766     main.obj (.text:_Z16RunOperationMode14Operation_Mode)
-                  00010f6c    00000518     rena.obj (.text:_ZN6MSP4304rena13ConfigureRenaEPNS_13channelconfigEhNS_6pulsarES3_S3_)
-                  00011484    000004dc     ff.obj (.text:chk_mounted)
-                  00011960    00000452     rts430x_lc_rd_eabi.lib : frcdivd.obj (.text:__TI_frcdivd)
-                  00011db2    00000360     MemoryHandling.obj (.text:_Z13GetSystemInfoPhR14Operation_ModeRjS2_RmS3_S3_S3_)
-                  00012112    00000316     MemoryHandling.obj (.text:_Z16UpdateSystemInfoPh14Operation_Modejjmmmm)
-                  00012428    00000304     rena.obj (.text:_ZN6MSP4304rena11CheckConfigEv)
-                  0001272c    000002e4     rts430x_lc_rd_eabi.lib : frcmpyd.obj (.text:__TI_frcmpyd)
-                  00012a10    000002d8                            : addd.obj (.text:__mspabi_addd)
-                  00012ce8    000002c2     main.obj (.text:_Z11OBC_HandlerPhj)
-                  00012faa    0000029e     ff.obj (.text:f_write)
-                  00013248    00000282     rts430x_lc_rd_eabi.lib : mpyd.obj (.text:__mspabi_mpyd)
-                  000134ca    00000252                            : frcaddd.obj (.text:__TI_frcaddd)
-                  0001371c    00000250     ff.obj (.text:f_lseek)
-                  0001396c    00000224     ff.obj (.text:f_open)
-                  00013b90    00000222     rts430x_lc_rd_eabi.lib : divd.obj (.text:__mspabi_divd)
-                  00013db2    000001f8     main.obj (.text:_Z12TS_Interruptv)
-                  00013faa    000001f2     ff.obj (.text:f_read)
-                  0001419c    000001c2     main.obj (.text:__sti___8_main_cpp_TCLK)
-                  0001435e    000001c0     ADC.obj (.text:_ZN6MSP4303ADC24ReadAllValuesToCharArrayEPh)
-                  0001451e    000001b0     MemoryHandling.obj (.text:_Z21AddSpectrumDoubleDataPA100_jm)
-                  000146ce    000001b0     MemoryHandling.obj (.text:_Z21AddSpectrumSingleDataPA100_jm)
-                  0001487e    0000018a     ff.obj (.text:put_fat)
-                  00014a08    0000017e     ff.obj (.text:dir_next)
-                  00014b86    00000144     mmc.obj (.text:disk_initialize)
-                  00014cca    00000140     ff.obj (.text:get_fat)
-                  00014e0a    0000013a     MemoryHandling.obj (.text:_Z11ReportEvent13StatusReportsm)
-                  00014f44    00000134     ff.obj (.text:create_name)
-                  00015078    0000012c     MemoryHandling.obj (.text:_Z11ReadRawDataPhjmm)
-                  000151a4    0000012c     MemoryHandling.obj (.text:_Z16ReadSpectrumDataPhjmm)
-                  000152d0    0000012a     MemoryHandling.obj (.text:_Z10AddRawDataPhjm)
-                  000153fa    00000120     ff.obj (.text:create_chain)
-                  0001551a    00000100     ff.obj (.text:dir_sdi)
-                  0001561a    000000f4     mmc.obj (.text:disk_ioctl)
-                  0001570e    000000f2     MemoryHandling.obj (.text:_Z20GetRawDataFileLengthm)
-                  00015800    000000f2     MemoryHandling.obj (.text:_Z25GetSpectrumDataFileLengthm)
-                  000158f2    000000f0     main.obj (.text:main)
-                  000159e2    000000ec     ff.obj (.text:sync)
-                  00015ace    000000d8     rts430x_lc_rd_eabi.lib : cmpd.obj (.text:__mspabi_cmpd)
-                  00015ba6    000000ce     MemoryHandling.obj (.text:_Z11ReportEvent13StatusReports)
-                  00015c74    000000be     UART.obj (.text:_ZN6MSP4304UART4SendEPhj)
-                  00015d32    000000be     ff.obj (.text:move_window)
-                  00015df0    000000bc     mmc.obj (.text:disk_write)
-                  00015eac    000000ba     RTC.obj (.text:_Z17getRTCasByteArrayPh)
-                  00015f66    000000ba     rts430x_lc_rd_eabi.lib : memory.obj (.text:malloc)
-                  00016020    000000b4     UART.obj (.text:_ZN6MSP4304UARTC1ENS_3BUSEmPFvhPhjE)
-                  000160d4    000000b4     ff.obj (.text:follow_path)
-                  00016188    000000b4     mmc.obj (.text:send_cmd)
-                  0001623c    000000b2     rts430x_lc_rd_eabi.lib : renormd.obj (.text:__TI_renormd)
-                  000162ee    000000a8     ByteFunctions.obj (.text:_Z18AssembleDataPacketPhj)
-                  00016396    000000a8     ff.obj (.text:f_opendir)
-                  0001643e    000000a4     Timer.obj (.text:_ZN6MSP4305Timer5StartEj)
-                  000164e2    000000a4     ff.obj (.text:f_sync)
-                  00016586    0000009c     ff.obj (.text:remove_chain)
-                  00016622    00000094     mmc.obj (.text:disk_read)
-                  000166b6    00000090     ff.obj (.text:check_fs)
-                  00016746    0000008e     rts430x_lc_rd_eabi.lib : memory.obj (.text:free)
-                  000167d4    0000008c     main.obj (.text:_Z20ADCACQTimerInterruptv)
-                  00016860    0000008a     rena.obj (.text:_ZN6MSP4304rena9ReloadSINEmjNS_6pulsarES1_Ph)
-                  000168ea    00000084     ff.obj (.text:dir_register)
-                  0001696e    0000007e     ADC.obj (.text:_ZN6MSP4303ADC17SingleReadVoltageENS_10ADCChannelE)
-                  000169ec    0000007e     pulsar.obj (.text:_ZN6MSP4306pulsar16GenerateSHRClockEmjS0_Ph)
-                  00016a6a    00000076     rts430x_lc_rd_eabi.lib : fltuld.obj (.text:__mspabi_fltuld)
-                  00016ae0    0000006e                            : autoinit.obj (.text:_auto_init_hold_wdt)
-                  00016b4e    00000068                            : fixdul.obj (.text:__mspabi_fixdul)
-                  00016bb6    00000062     Timer.obj (.text:_ZN6MSP4305Timer4StopEv)
-                  00016c18    00000062     rts430x_lc_rd_eabi.lib : copy_decompress_rle.obj (.text:__TI_decompress_rle_core)
-                  00016c7a    0000005c     pre_init.obj (.text:_system_pre_init)
-                  00016cd6    0000005a     ff.obj (.text:dir_find)
-                  00016d30    00000058     rts430x_lc_rd_eabi.lib : div32u.obj (.text)
-                  00016d88    00000058     mmc.obj (.text:xmit_datablock)
-                  00016de0    00000056     Timer.obj (.text:_ZN6MSP4305TimerC1ENS_5TIMEREPFvvE)
-                  00016e36    00000056     rts430x_lc_rd_eabi.lib : dtor_list.obj (.text:__cxa_finalize)
-                  00016e8c    00000052     ByteFunctions.obj (.text:_Z20ConvertToEnergyAnodedh)
-                  00016ede    00000052     mmc.obj (.text:rcvr_datablock)
-                  00016f30    0000004e     pre_init.obj (.text:SetVcoreUp)
-                  00016f7e    0000004e     rts430x_lc_rd_eabi.lib : dtor_list.obj (.text:_Z11__TI_atexitPFYvPvES_S_)
-                  00016fcc    0000004e     pulsar.obj (.text:_ZN6MSP4306pulsarC1EPhhNS_13InterruptTypeEPFvvE)
-                  0001701a    0000004c     ByteFunctions.obj (.text:_Z7UlToStrPcmh)
-                  00017066    00000048     ADC.obj (.text:_ZN6MSP4303ADC26SingleReadValueAsCharArrayENS_10ADCChannelE)
-                  000170ae    00000046     HAL_SDCard.obj (.text:SDCard_init)
-                  000170f4    00000042     ADC.obj (.text:_ZN6MSP4303ADC15SingleReadValueENS_10ADCChannelE)
-                  00017136    00000042     rts430x_lc_rd_eabi.lib : memory.obj (.text:minit)
-                  00017178    0000003e     I2C.obj (.text:_ZN6MSP4303I2CC1ENS_3BUSEPFvPhjE)
-                  000171b6    0000003e     ff.obj (.text:clust2sect)
-                  000171f4    0000003e     rts430x_lc_rd_eabi.lib : asr32.obj (.text:l_asr_const)
-                  00017232    0000003e                            : lsl32.obj (.text:l_lsl_const)
-                  00017270    0000003e                            : lsr32.obj (.text:l_lsr_const)
-                  000172ae    0000003c     main.obj (.text:_Z13CommandVectorhPhj)
-                  000172ea    00000038     HAL_SDCard.obj (.text:SDCard_readFrame)
-                  00017322    00000036     mmc.obj (.text:wait_ready)
-                  00017358    00000034     RTC.obj (.text:_Z7initRTCiiiiiii)
-                  0001738c    00000032     ff.obj (.text:f_mount)
-                  000173be    00000030     MemoryHandling.obj (.text:_Z8fat_initv)
-                  000173ee    0000002e     HAL_SDCard.obj (.text:SDCard_sendFrame)
-                  0001741c    0000002e     ByteFunctions.obj (.text:_Z24CompareCharArrayToStringPhPKcj)
-                  0001744a    0000002e     rts430x_lc_rd_eabi.lib : exit.obj (.text:exit)
-                  00017478    0000002c     pulsar.obj (.text:_ZN6MSP4306pulsarC1EPhhb)
-                  000174a4    0000002c     ff.obj (.text:validate)
-                  000174d0    00000026     pulsar.obj (.text:_ZN6MSP4306pulsar3getEv)
-                  000174f6    00000024     rts430x_lc_rd_eabi.lib : copy_zero_init.obj (.text:decompress:ZI:__TI_zero_init)
-                  0001751a    00000022                            : mult32_f5hw.obj (.text)
-                  0001753c    00000020     mmc.obj (.text:disk_status)
-                  0001755c    0000001e     pulsar.obj (.text:_ZN6MSP4306pulsar3setEb)
-                  0001757a    0000001c     ByteFunctions.obj (.text:_Z34DetermineNumberOfTriggeredChannelsPhh)
-                  00017596    0000001a     main.obj (.text:_Z18RTCSecondInterruptv)
-                  000175b0    0000001a     main.obj (.text:_Z5delayj)
-                  000175ca    00000018     mmc.obj (.text:select)
-                  000175e2    00000016     pulsar.obj (.text:_ZN6MSP4306pulsarC1EPhh)
-                  000175f8    00000016     ff.obj (.text:chk_chr)
-                  0001760e    00000016     ff.obj (.text:f_close)
-                  00017624    00000016     rts430x_lc_rd_eabi.lib : memset.obj (.text:memset)
-                  0001763a    00000016                            : mult16_f5hw.obj (.text)
-                  00017650    00000014     ff.obj (.text:mem_cmp)
-                  00017664    00000014     rts430x_lc_rd_eabi.lib : memcpy.obj (.text:memcpy)
-                  00017678    00000012     HAL_SDCard.obj (.text:SDCard_fastMode)
-                  0001768a    00000012     rts430x_lc_rd_eabi.lib : fixdu.obj (.text:__mspabi_fixdu)
-                  0001769c    00000012                            : copy_decompress_none.obj (.text:decompress:none:__TI_decompress_none)
-                  000176ae    00000012     mmc.obj (.text:deselect)
-                  000176c0    00000012     ff.obj (.text:mem_cpy)
-                  000176d2    00000012     ff.obj (.text:mem_set)
-                  000176e4    00000010     rts430x_lc_rd_eabi.lib : asr32.obj (.text:l_asr)
-                  000176f4    00000010                            : lsl32.obj (.text:l_lsl)
-                  00017704    00000010                            : lsr32.obj (.text:l_lsr)
-                  00017714    0000000e     pulsar.obj (.text:_ZN6MSP4306pulsar15EnableInterruptEv)
-                  00017722    0000000c     RTC.obj (.text:_Z9enableSecPFvvE)
-                  0001772e    0000000a     rts430x_lc_rd_eabi.lib : typeinfo_.obj (.text:_ZN10__cxxabiv117__class_type_infoD0Ev)
-                  00017738    0000000a                            : typeinfo_.obj (.text:_ZN10__cxxabiv120__si_class_type_infoD0Ev)
-                  00017742    0000000a     I2C.obj (.text:_ZN6MSP4303I2CD0Ev)
-                  0001774c    0000000a     rts430x_lc_rd_eabi.lib : delete.obj (.text:_ZdlPv)
-                  00017756    0000000a     mmc.obj (.text:get_fattime)
-                  00017760    0000000a     rts430x_lc_rd_eabi.lib : asr16.obj (.text)
-                  0001776a    00000008     RTC.obj (.text:_Z10disableSecv)
-                  00017772    00000008     RTC.obj (.text:_Z8startRTCv)
-                  0001777a    00000008     I2C.obj (.text:_ZN6MSP4303I2C4SendEPh)
-                  00017782    00000006     HAL_SDCard.obj (.text:SDCard_setCSHigh)
-                  00017788    00000006     HAL_SDCard.obj (.text:SDCard_setCSLow)
-                  0001778e    00000006     rts430x_lc_rd_eabi.lib : isr_trap.obj (.text:__TI_ISR_TRAP)
-                  00017794    00000006                            : dtor_list.obj (.text:__cxa_ia64_exit)
-                  0001779a    00000006                            : fltud.obj (.text:__mspabi_fltud)
-                  000177a0    00000006                            : copy_decompress_rle.obj (.text:decompress:rle24:__TI_decompress_rle24)
-                  000177a6    00000006     mmc.obj (.text:rcvr_mmc)
-                  000177ac    00000006     mmc.obj (.text:xmit_mmc)
-                  000177b2    00000004     rts430x_lc_rd_eabi.lib : dtor_list.obj (.text:__cxa_atexit)
-                  000177b6    00000004                            : exit.obj (.text:abort)
-                  000177ba    00000002                            : typeinfo_.obj (.text:_ZN10__cxxabiv117__class_type_infoD1Ev)
-                  000177bc    00000002                            : typeinfo_.obj (.text:_ZN10__cxxabiv120__si_class_type_infoD1Ev)
-                  000177be    00000002     ADC.obj (.text:_ZN6MSP4303ADCC1Ev)
-                  000177c0    00000002     I2C.obj (.text:_ZN6MSP4303I2CD1Ev)
-                  000177c2    00000002     rena.obj (.text:_ZN6MSP4304renaC1Ev)
-                  000177c4    00000002     rts430x_lc_rd_eabi.lib : _lock.obj (.text:_nop)
+                  00010806    0000074c     main.obj (.text:_Z16RunOperationMode14Operation_Mode)
+                  00010f52    00000518     rena.obj (.text:_ZN6MSP4304rena13ConfigureRenaEPNS_13channelconfigEhNS_6pulsarES3_S3_)
+                  0001146a    000004dc     ff.obj (.text:chk_mounted)
+                  00011946    00000452     rts430x_lc_rd_eabi.lib : frcdivd.obj (.text:__TI_frcdivd)
+                  00011d98    00000360     MemoryHandling.obj (.text:_Z13GetSystemInfoPhR14Operation_ModeRjS2_RmS3_S3_S3_)
+                  000120f8    00000316     MemoryHandling.obj (.text:_Z16UpdateSystemInfoPh14Operation_Modejjmmmm)
+                  0001240e    00000304     rena.obj (.text:_ZN6MSP4304rena11CheckConfigEv)
+                  00012712    000002e4     rts430x_lc_rd_eabi.lib : frcmpyd.obj (.text:__TI_frcmpyd)
+                  000129f6    000002d8                            : addd.obj (.text:__mspabi_addd)
+                  00012cce    000002c2     main.obj (.text:_Z11OBC_HandlerPhj)
+                  00012f90    0000029e     ff.obj (.text:f_write)
+                  0001322e    00000282     rts430x_lc_rd_eabi.lib : mpyd.obj (.text:__mspabi_mpyd)
+                  000134b0    00000252                            : frcaddd.obj (.text:__TI_frcaddd)
+                  00013702    00000250     ff.obj (.text:f_lseek)
+                  00013952    00000224     ff.obj (.text:f_open)
+                  00013b76    00000222     rts430x_lc_rd_eabi.lib : divd.obj (.text:__mspabi_divd)
+                  00013d98    000001f8     main.obj (.text:_Z12TS_Interruptv)
+                  00013f90    000001f2     ff.obj (.text:f_read)
+                  00014182    000001c2     main.obj (.text:__sti___8_main_cpp_TCLK)
+                  00014344    000001c0     ADC.obj (.text:_ZN6MSP4303ADC24ReadAllValuesToCharArrayEPh)
+                  00014504    000001b0     MemoryHandling.obj (.text:_Z21AddSpectrumDoubleDataPA100_jm)
+                  000146b4    000001b0     MemoryHandling.obj (.text:_Z21AddSpectrumSingleDataPA100_jm)
+                  00014864    0000018a     ff.obj (.text:put_fat)
+                  000149ee    0000017e     ff.obj (.text:dir_next)
+                  00014b6c    00000144     mmc.obj (.text:disk_initialize)
+                  00014cb0    00000140     ff.obj (.text:get_fat)
+                  00014df0    0000013a     MemoryHandling.obj (.text:_Z11ReportEvent13StatusReportsm)
+                  00014f2a    00000134     ff.obj (.text:create_name)
+                  0001505e    0000012c     MemoryHandling.obj (.text:_Z11ReadRawDataPhjmm)
+                  0001518a    0000012c     MemoryHandling.obj (.text:_Z16ReadSpectrumDataPhjmm)
+                  000152b6    0000012a     MemoryHandling.obj (.text:_Z10AddRawDataPhjm)
+                  000153e0    00000126     MemoryHandling.obj (.text:_Z17AddLightCurveDataPjm)
+                  00015506    00000120     ff.obj (.text:create_chain)
+                  00015626    00000100     ff.obj (.text:dir_sdi)
+                  00015726    000000f4     mmc.obj (.text:disk_ioctl)
+                  0001581a    000000f2     MemoryHandling.obj (.text:_Z20GetRawDataFileLengthm)
+                  0001590c    000000f2     MemoryHandling.obj (.text:_Z25GetSpectrumDataFileLengthm)
+                  000159fe    000000f0     main.obj (.text:main)
+                  00015aee    000000ec     ff.obj (.text:sync)
+                  00015bda    000000d8     rts430x_lc_rd_eabi.lib : cmpd.obj (.text:__mspabi_cmpd)
+                  00015cb2    000000ce     MemoryHandling.obj (.text:_Z11ReportEvent13StatusReports)
+                  00015d80    000000be     UART.obj (.text:_ZN6MSP4304UART4SendEPhj)
+                  00015e3e    000000be     ff.obj (.text:move_window)
+                  00015efc    000000bc     mmc.obj (.text:disk_write)
+                  00015fb8    000000ba     RTC.obj (.text:_Z17getRTCasByteArrayPh)
+                  00016072    000000ba     rts430x_lc_rd_eabi.lib : memory.obj (.text:malloc)
+                  0001612c    000000b4     UART.obj (.text:_ZN6MSP4304UARTC1ENS_3BUSEmPFvhPhjE)
+                  000161e0    000000b4     ff.obj (.text:follow_path)
+                  00016294    000000b4     mmc.obj (.text:send_cmd)
+                  00016348    000000b2     rts430x_lc_rd_eabi.lib : renormd.obj (.text:__TI_renormd)
+                  000163fa    000000a8     ByteFunctions.obj (.text:_Z18AssembleDataPacketPhj)
+                  000164a2    000000a8     ff.obj (.text:f_opendir)
+                  0001654a    000000a4     Timer.obj (.text:_ZN6MSP4305Timer5StartEj)
+                  000165ee    000000a4     ff.obj (.text:f_sync)
+                  00016692    0000009c     ff.obj (.text:remove_chain)
+                  0001672e    00000094     mmc.obj (.text:disk_read)
+                  000167c2    00000090     ff.obj (.text:check_fs)
+                  00016852    0000008e     rts430x_lc_rd_eabi.lib : memory.obj (.text:free)
+                  000168e0    0000008c     main.obj (.text:_Z20ADCACQTimerInterruptv)
+                  0001696c    0000008a     rena.obj (.text:_ZN6MSP4304rena9ReloadSINEmjNS_6pulsarES1_Ph)
+                  000169f6    00000084     ff.obj (.text:dir_register)
+                  00016a7a    0000007e     ADC.obj (.text:_ZN6MSP4303ADC17SingleReadVoltageENS_10ADCChannelE)
+                  00016af8    0000007e     pulsar.obj (.text:_ZN6MSP4306pulsar16GenerateSHRClockEmjS0_Ph)
+                  00016b76    00000076     rts430x_lc_rd_eabi.lib : fltuld.obj (.text:__mspabi_fltuld)
+                  00016bec    0000006e                            : autoinit.obj (.text:_auto_init_hold_wdt)
+                  00016c5a    00000068                            : fixdul.obj (.text:__mspabi_fixdul)
+                  00016cc2    00000062     Timer.obj (.text:_ZN6MSP4305Timer4StopEv)
+                  00016d24    00000062     rts430x_lc_rd_eabi.lib : copy_decompress_rle.obj (.text:__TI_decompress_rle_core)
+                  00016d86    0000005c     pre_init.obj (.text:_system_pre_init)
+                  00016de2    0000005a     ff.obj (.text:dir_find)
+                  00016e3c    00000058     rts430x_lc_rd_eabi.lib : div32u.obj (.text)
+                  00016e94    00000058     mmc.obj (.text:xmit_datablock)
+                  00016eec    00000056     Timer.obj (.text:_ZN6MSP4305TimerC1ENS_5TIMEREPFvvE)
+                  00016f42    00000056     rts430x_lc_rd_eabi.lib : dtor_list.obj (.text:__cxa_finalize)
+                  00016f98    00000052     ByteFunctions.obj (.text:_Z20ConvertToEnergyAnodedh)
+                  00016fea    00000052     mmc.obj (.text:rcvr_datablock)
+                  0001703c    0000004e     pre_init.obj (.text:SetVcoreUp)
+                  0001708a    0000004e     rts430x_lc_rd_eabi.lib : dtor_list.obj (.text:_Z11__TI_atexitPFYvPvES_S_)
+                  000170d8    0000004e     pulsar.obj (.text:_ZN6MSP4306pulsarC1EPhhNS_13InterruptTypeEPFvvE)
+                  00017126    0000004c     ByteFunctions.obj (.text:_Z7UlToStrPcmh)
+                  00017172    00000048     ADC.obj (.text:_ZN6MSP4303ADC26SingleReadValueAsCharArrayENS_10ADCChannelE)
+                  000171ba    00000046     HAL_SDCard.obj (.text:SDCard_init)
+                  00017200    00000042     ADC.obj (.text:_ZN6MSP4303ADC15SingleReadValueENS_10ADCChannelE)
+                  00017242    00000042     rts430x_lc_rd_eabi.lib : memory.obj (.text:minit)
+                  00017284    0000003e     I2C.obj (.text:_ZN6MSP4303I2CC1ENS_3BUSEPFvPhjE)
+                  000172c2    0000003e     ff.obj (.text:clust2sect)
+                  00017300    0000003e     rts430x_lc_rd_eabi.lib : asr32.obj (.text:l_asr_const)
+                  0001733e    0000003e                            : lsl32.obj (.text:l_lsl_const)
+                  0001737c    0000003e                            : lsr32.obj (.text:l_lsr_const)
+                  000173ba    0000003c     main.obj (.text:_Z13CommandVectorhPhj)
+                  000173f6    00000038     HAL_SDCard.obj (.text:SDCard_readFrame)
+                  0001742e    00000036     mmc.obj (.text:wait_ready)
+                  00017464    00000034     RTC.obj (.text:_Z7initRTCiiiiiii)
+                  00017498    00000032     ff.obj (.text:f_mount)
+                  000174ca    00000030     MemoryHandling.obj (.text:_Z8fat_initv)
+                  000174fa    0000002e     HAL_SDCard.obj (.text:SDCard_sendFrame)
+                  00017528    0000002e     ByteFunctions.obj (.text:_Z24CompareCharArrayToStringPhPKcj)
+                  00017556    0000002e     rts430x_lc_rd_eabi.lib : exit.obj (.text:exit)
+                  00017584    0000002c     pulsar.obj (.text:_ZN6MSP4306pulsarC1EPhhb)
+                  000175b0    0000002c     ff.obj (.text:validate)
+                  000175dc    00000026     pulsar.obj (.text:_ZN6MSP4306pulsar3getEv)
+                  00017602    00000024     rts430x_lc_rd_eabi.lib : copy_zero_init.obj (.text:decompress:ZI:__TI_zero_init)
+                  00017626    00000022                            : mult32_f5hw.obj (.text)
+                  00017648    00000020     mmc.obj (.text:disk_status)
+                  00017668    0000001e     pulsar.obj (.text:_ZN6MSP4306pulsar3setEb)
+                  00017686    0000001c     ByteFunctions.obj (.text:_Z34DetermineNumberOfTriggeredChannelsPhh)
+                  000176a2    0000001a     main.obj (.text:_Z18RTCSecondInterruptv)
+                  000176bc    0000001a     main.obj (.text:_Z5delayj)
+                  000176d6    00000018     mmc.obj (.text:select)
+                  000176ee    00000016     pulsar.obj (.text:_ZN6MSP4306pulsarC1EPhh)
+                  00017704    00000016     ff.obj (.text:chk_chr)
+                  0001771a    00000016     ff.obj (.text:f_close)
+                  00017730    00000016     rts430x_lc_rd_eabi.lib : memset.obj (.text:memset)
+                  00017746    00000016                            : mult16_f5hw.obj (.text)
+                  0001775c    00000014     ff.obj (.text:mem_cmp)
+                  00017770    00000014     rts430x_lc_rd_eabi.lib : memcpy.obj (.text:memcpy)
+                  00017784    00000012     HAL_SDCard.obj (.text:SDCard_fastMode)
+                  00017796    00000012     rts430x_lc_rd_eabi.lib : fixdu.obj (.text:__mspabi_fixdu)
+                  000177a8    00000012                            : copy_decompress_none.obj (.text:decompress:none:__TI_decompress_none)
+                  000177ba    00000012     mmc.obj (.text:deselect)
+                  000177cc    00000012     ff.obj (.text:mem_cpy)
+                  000177de    00000012     ff.obj (.text:mem_set)
+                  000177f0    00000010     rts430x_lc_rd_eabi.lib : asr32.obj (.text:l_asr)
+                  00017800    00000010                            : lsl32.obj (.text:l_lsl)
+                  00017810    00000010                            : lsr32.obj (.text:l_lsr)
+                  00017820    0000000e     pulsar.obj (.text:_ZN6MSP4306pulsar15EnableInterruptEv)
+                  0001782e    0000000c     RTC.obj (.text:_Z9enableSecPFvvE)
+                  0001783a    0000000a     rts430x_lc_rd_eabi.lib : typeinfo_.obj (.text:_ZN10__cxxabiv117__class_type_infoD0Ev)
+                  00017844    0000000a                            : typeinfo_.obj (.text:_ZN10__cxxabiv120__si_class_type_infoD0Ev)
+                  0001784e    0000000a     I2C.obj (.text:_ZN6MSP4303I2CD0Ev)
+                  00017858    0000000a     rts430x_lc_rd_eabi.lib : delete.obj (.text:_ZdlPv)
+                  00017862    0000000a     mmc.obj (.text:get_fattime)
+                  0001786c    0000000a     rts430x_lc_rd_eabi.lib : asr16.obj (.text)
+                  00017876    00000008     RTC.obj (.text:_Z10disableSecv)
+                  0001787e    00000008     RTC.obj (.text:_Z8startRTCv)
+                  00017886    00000008     I2C.obj (.text:_ZN6MSP4303I2C4SendEPh)
+                  0001788e    00000006     HAL_SDCard.obj (.text:SDCard_setCSHigh)
+                  00017894    00000006     HAL_SDCard.obj (.text:SDCard_setCSLow)
+                  0001789a    00000006     rts430x_lc_rd_eabi.lib : isr_trap.obj (.text:__TI_ISR_TRAP)
+                  000178a0    00000006                            : dtor_list.obj (.text:__cxa_ia64_exit)
+                  000178a6    00000006                            : fltud.obj (.text:__mspabi_fltud)
+                  000178ac    00000006                            : copy_decompress_rle.obj (.text:decompress:rle24:__TI_decompress_rle24)
+                  000178b2    00000006     mmc.obj (.text:rcvr_mmc)
+                  000178b8    00000006     mmc.obj (.text:xmit_mmc)
+                  000178be    00000004     rts430x_lc_rd_eabi.lib : dtor_list.obj (.text:__cxa_atexit)
+                  000178c2    00000004                            : exit.obj (.text:abort)
+                  000178c6    00000002                            : typeinfo_.obj (.text:_ZN10__cxxabiv117__class_type_infoD1Ev)
+                  000178c8    00000002                            : typeinfo_.obj (.text:_ZN10__cxxabiv120__si_class_type_infoD1Ev)
+                  000178ca    00000002     ADC.obj (.text:_ZN6MSP4303ADCC1Ev)
+                  000178cc    00000002     I2C.obj (.text:_ZN6MSP4303I2CD1Ev)
+                  000178ce    00000002     rena.obj (.text:_ZN6MSP4304renaC1Ev)
+                  000178d0    00000002     rts430x_lc_rd_eabi.lib : _lock.obj (.text:_nop)
 
 
 LINKER GENERATED COPY TABLES
 
 __TI_cinit_table @ 000061f0 records: 2, size/record: 8, table size: 16
-	.data: load addr=000061b8, load size=00000025 bytes, run addr=00001c00, run size=00001c9c bytes, compression=rle
-	.bss: load addr=000061ea, load size=00000006 bytes, run addr=0000389c, run size=00000d7d bytes, compression=zero_init
+	.data: load addr=000061b8, load size=00000025 bytes, run addr=00001c00, run size=00001ca4 bytes, compression=rle
+	.bss: load addr=000061ea, load size=00000006 bytes, run addr=000038a4, run size=00000d7d bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
@@ -457,7 +458,7 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address    name
 --------   ----
-000044fa   ACQ
+00004502   ACQ
 00003824   ACQCompleted
 00000700   ADC12CTL0
 00000701   ADC12CTL0_H
@@ -541,11 +542,12 @@ address    name
 00000732   ADC12MEM9
 00000733   ADC12MEM9_H
 00000732   ADC12MEM9_L
-0000453e   ADCACQTimer
-000177b6   C$$EXIT
-000044dc   CIN
-000044f4   CLF
-000044ee   CLS
+00004546   ADCACQTimer
+00003846   AnodeOnlySpectrumNumber
+000178c2   C$$EXIT
+000044e4   CIN
+000044fc   CLF
+000044f6   CLS
 00000150   CRCDI
 00000152   CRCDIRB
 00000153   CRCDIRB_H
@@ -558,13 +560,13 @@ address    name
 00000156   CRCRESR
 00000157   CRCRESR_H
 00000156   CRCRESR_L
-000044e8   CS
-000044e2   CSHIFT
-000043e6   ChannelConfigs
-0000384c   CommandFileNumber
-00003854   CommandLengthNumber
-00003850   CommandOffsetNumber
-00003846   ConfigNumber
+000044f0   CS
+000044ea   CSHIFT
+000043ee   ChannelConfigs
+00003854   CommandFileNumber
+0000385c   CommandLengthNumber
+00003858   CommandOffsetNumber
+0000384e   ConfigNumber
 00003834   CurrentOperationMode
 00003820   CurrentUARTMode
 00000510   DMA0CTL
@@ -610,10 +612,10 @@ address    name
 0000050f   DMAIV_H
 0000050e   DMAIV_L
 00001c00   DoubleSpectrumData
-00004500   ENABLE_5V
-00004512   ENABLE_ADC
-00004506   ENABLE_HV
-0000450c   ENABLE_HV_POWER
+00004508   ENABLE_5V
+0000451a   ENABLE_ADC
+0000450e   ENABLE_HV
+00004514   ENABLE_HV_POWER
 00003836   ExecutionNumber
 00000140   FCTL1
 00000141   FCTL1_H
@@ -624,11 +626,12 @@ address    name
 00000146   FCTL4
 00000147   FCTL4_H
 00000146   FCTL4_L
-00003aca   HitBuffer
-0000384a   HitNumber
-00003898   INS
+00003ad2   HitBuffer
+00003852   HitNumber
+000038a0   INS
 00003832   LastOperationMode
 00003370   LightCurve
+0000384a   LightCurveDataNumber
 000004c4   MAC
 000004da   MAC32H
 000004db   MAC32H_H
@@ -669,7 +672,7 @@ address    name
 000004c1   MPY_H
 000004c0   MPY_L
 00003822   MeasurementPeriod
-00004548   OBC
+00004550   OBC
 000004c8   OP2
 000004e2   OP2H
 000004e3   OP2H_H
@@ -679,7 +682,7 @@ address    name
 000004e0   OP2L_L
 000004c9   OP2_H
 000004c8   OP2_L
-00004536   OVRFLOW
+0000453e   OVRFLOW
 0000020e   P1IV
 0000021e   P2IV
 00000204   PADIR
@@ -829,15 +832,15 @@ address    name
 0000012e   PMMRIE
 0000012f   PMMRIE_H
 0000012e   PMMRIE_L
-00003ce6   Packet
+00003cee   Packet
 00000158   RCCTL0
 00000159   RCCTL0_H
 00000158   RCCTL0_L
-000044c4   READ
+000044cc   READ
 000001b0   REFCTL0
 000001b1   REFCTL0_H
 000001b0   REFCTL0_L
-00004540   RENA
+00004548   RENA
 000004e4   RES0
 000004e5   RES0_H
 000004e4   RES0_L
@@ -890,17 +893,17 @@ address    name
 000004b6   RTCYEAR
 000004b7   RTCYEAR_H
 000004b6   RTCYEAR_L
-0000386e   RTC_AsCharArray
-000045c0   RawDataFileNumberChar
-000045c4   RawDataLengthNumberChar
+00003876   RTC_AsCharArray
+000045c8   RawDataFileNumberChar
+000045cc   RawDataLengthNumberChar
 0000383a   RawDataNumber
-00003ee6   ReceivedData
-00017678   SDCard_fastMode
-000170ae   SDCard_init
-000172ea   SDCard_readFrame
-000173ee   SDCard_sendFrame
-00017782   SDCard_setCSHigh
-00017788   SDCard_setCSLow
+00003eee   ReceivedData
+00017784   SDCard_fastMode
+000171ba   SDCard_init
+000173f6   SDCard_readFrame
+000174fa   SDCard_sendFrame
+0001788e   SDCard_setCSHigh
+00017894   SDCard_setCSLow
 00000100   SFRIE1
 00000101   SFRIE1_H
 00000100   SFRIE1_L
@@ -910,9 +913,9 @@ address    name
 00000104   SFRRPCR
 00000105   SFRRPCR_H
 00000104   SFRRPCR_L
-000044ca   SHRCLK
-000044d0   SIN
-00004530   SOUT
+000044d2   SHRCLK
+000044d8   SIN
+00004538   SOUT
 000004ce   SUMEXT
 000004cf   SUMEXT_H
 000004ce   SUMEXT_L
@@ -958,11 +961,11 @@ address    name
 0000019a   SYSUNIV
 0000019b   SYSUNIV_H
 0000019a   SYSUNIV_L
-000045c8   Sec_Callback
-00016f30   SetVcoreUp
+000045d0   Sec_Callback
+0001703c   SetVcoreUp
 000027b8   SingleSpectrumData
-000045cc   SpectrumDataFileNumberChar
-000045d0   SpectrumDataLengthNumberChar
+000045d4   SpectrumDataFileNumberChar
+000045d8   SpectrumDataLengthNumberChar
 00003842   SpectrumDoubleNumber
 00003826   SpectrumInterval
 0000383e   SpectrumSingleNumber
@@ -1008,14 +1011,14 @@ address    name
 000003e0   TB0EX0
 000003ee   TB0IV
 000003d0   TB0R
-000044be   TCLK
-00004518   TEST
-000044d6   TIN
-0000452a   TOUT
-0000451e   TS1
-00004524   TS2
+000044c6   TCLK
+00004520   TEST
+000044de   TIN
+00004532   TOUT
+00004526   TS1
+0000452c   TS2
 00003830   TriggerNumber
-00004550   TriggeredChannels
+00004558   TriggeredChannels
 000005d0   UCA0ABCTL
 000005c6   UCA0BRW
 000005c7   UCA0BRW_H
@@ -1195,120 +1198,121 @@ address    name
 0000015d   WDTCTL_H
 0000015c   WDTCTL_L
 00003838   WDTNumber
-000152d0   _Z10AddRawDataPhjm
-0001776a   _Z10disableSecv
-00012ce8   _Z11OBC_HandlerPhj
-00015078   _Z11ReadRawDataPhjmm
-00015ba6   _Z11ReportEvent13StatusReports
-00014e0a   _Z11ReportEvent13StatusReportsm
-00013db2   _Z12TS_Interruptv
-000172ae   _Z13CommandVectorhPhj
-00011db2   _Z13GetSystemInfoPhR14Operation_ModeRjS2_RmS3_S3_S3_
-000151a4   _Z16ReadSpectrumDataPhjmm
+000152b6   _Z10AddRawDataPhjm
+00017876   _Z10disableSecv
+00012cce   _Z11OBC_HandlerPhj
+0001505e   _Z11ReadRawDataPhjmm
+00015cb2   _Z11ReportEvent13StatusReports
+00014df0   _Z11ReportEvent13StatusReportsm
+00013d98   _Z12TS_Interruptv
+000173ba   _Z13CommandVectorhPhj
+00011d98   _Z13GetSystemInfoPhR14Operation_ModeRjS2_RmS3_S3_S3_
+0001518a   _Z16ReadSpectrumDataPhjmm
 00010806   _Z16RunOperationMode14Operation_Mode
-00012112   _Z16UpdateSystemInfoPh14Operation_Modejjmmmm
-00015eac   _Z17getRTCasByteArrayPh
-000162ee   _Z18AssembleDataPacketPhj
-00017596   _Z18RTCSecondInterruptv
+000120f8   _Z16UpdateSystemInfoPh14Operation_Modejjmmmm
+000153e0   _Z17AddLightCurveDataPjm
+00015fb8   _Z17getRTCasByteArrayPh
+000163fa   _Z18AssembleDataPacketPhj
+000176a2   _Z18RTCSecondInterruptv
 00010000   _Z18UARTCommandHandler9UART_Mode
-000167d4   _Z20ADCACQTimerInterruptv
-00016e8c   _Z20ConvertToEnergyAnodedh
-0001570e   _Z20GetRawDataFileLengthm
-0001451e   _Z21AddSpectrumDoubleDataPA100_jm
-000146ce   _Z21AddSpectrumSingleDataPA100_jm
-0001741c   _Z24CompareCharArrayToStringPhPKcj
-00015800   _Z25GetSpectrumDataFileLengthm
-0001757a   _Z34DetermineNumberOfTriggeredChannelsPhh
-000175b0   _Z5delayj
+000168e0   _Z20ADCACQTimerInterruptv
+00016f98   _Z20ConvertToEnergyAnodedh
+0001581a   _Z20GetRawDataFileLengthm
+00014504   _Z21AddSpectrumDoubleDataPA100_jm
+000146b4   _Z21AddSpectrumSingleDataPA100_jm
+00017528   _Z24CompareCharArrayToStringPhPKcj
+0001590c   _Z25GetSpectrumDataFileLengthm
+00017686   _Z34DetermineNumberOfTriggeredChannelsPhh
+000176bc   _Z5delayj
 00005e46   _Z7RTC_ISRv
-0001701a   _Z7UlToStrPcmh
-00017358   _Z7initRTCiiiiiii
-000173be   _Z8fat_initv
-00017772   _Z8startRTCv
-00017722   _Z9enableSecPFvvE
-0001772e   _ZN10__cxxabiv117__class_type_infoD0Ev
-000177ba   _ZN10__cxxabiv117__class_type_infoD1Ev
-000177ba   _ZN10__cxxabiv117__class_type_infoD2Ev
-00017738   _ZN10__cxxabiv120__si_class_type_infoD0Ev
-000177bc   _ZN10__cxxabiv120__si_class_type_infoD1Ev
-000177bc   _ZN10__cxxabiv120__si_class_type_infoD2Ev
-000040e6   _ZN6MSP43010DataBufferE
-0000385c   _ZN6MSP43010TA0CounterE
-00003860   _ZN6MSP43010TA1CounterE
-00003864   _ZN6MSP43010TB0CounterE
-00003884   _ZN6MSP43010UART_PhaseE
-0000387e   _ZN6MSP43011DataCounterE
-000045d4   _ZN6MSP43011I2C_RECEIVEE
-00003866   _ZN6MSP43011TA0_1PeriodE
-0000386a   _ZN6MSP43011TA1_1PeriodE
+00017126   _Z7UlToStrPcmh
+00017464   _Z7initRTCiiiiiii
+000174ca   _Z8fat_initv
+0001787e   _Z8startRTCv
+0001782e   _Z9enableSecPFvvE
+0001783a   _ZN10__cxxabiv117__class_type_infoD0Ev
+000178c6   _ZN10__cxxabiv117__class_type_infoD1Ev
+000178c6   _ZN10__cxxabiv117__class_type_infoD2Ev
+00017844   _ZN10__cxxabiv120__si_class_type_infoD0Ev
+000178c8   _ZN10__cxxabiv120__si_class_type_infoD1Ev
+000178c8   _ZN10__cxxabiv120__si_class_type_infoD2Ev
+000040ee   _ZN6MSP43010DataBufferE
+00003864   _ZN6MSP43010TA0CounterE
+00003868   _ZN6MSP43010TA1CounterE
+0000386c   _ZN6MSP43010TB0CounterE
+0000388c   _ZN6MSP43010UART_PhaseE
+00003886   _ZN6MSP43011DataCounterE
+000045dc   _ZN6MSP43011I2C_RECEIVEE
+0000386e   _ZN6MSP43011TA0_1PeriodE
+00003872   _ZN6MSP43011TA1_1PeriodE
 00005c00   _ZN6MSP43011USCI_A0_ISREv
 00005d56   _ZN6MSP43011USCI_B0_ISREv
-000045b4   _ZN6MSP43012HeaderBufferE
-00003868   _ZN6MSP43012TA0_1CounterE
-0000386c   _ZN6MSP43012TA1_1CounterE
-000045d8   _ZN6MSP43013CommandVectorE
-00003880   _ZN6MSP43013HeaderCounterE
+000045bc   _ZN6MSP43012HeaderBufferE
+00003870   _ZN6MSP43012TA0_1CounterE
+00003874   _ZN6MSP43012TA1_1CounterE
+000045e0   _ZN6MSP43013CommandVectorE
+00003888   _ZN6MSP43013HeaderCounterE
 00005dc2   _ZN6MSP43013TIMER0_A0_ISREv
 00005e70   _ZN6MSP43013TIMER0_B0_ISREv
 00005e04   _ZN6MSP43013TIMER1_A1_ISREv
-00003883   _ZN6MSP43015IsDataExcpectedE
-00003890   _ZN6MSP43016ADCInterruptFlagE
-00003858   _ZN6MSP43016SelectedTA0TimerE
-00003859   _ZN6MSP43016SelectedTA1TimerE
-000045dc   _ZN6MSP43016TimerA0InterruptE
-000045e0   _ZN6MSP43016TimerA1InterruptE
-000045e4   _ZN6MSP43016TimerB0InterruptE
-000045e8   _ZN6MSP43018TimerA0_1InterruptE
-000045ec   _ZN6MSP43018TimerA1_1InterruptE
-00003891   _ZN6MSP4301iE
-000045f0   _ZN6MSP43020interruptVectorPORT2E
-000170f4   _ZN6MSP4303ADC15SingleReadValueENS_10ADCChannelE
-0001696e   _ZN6MSP4303ADC17SingleReadVoltageENS_10ADCChannelE
-0001435e   _ZN6MSP4303ADC24ReadAllValuesToCharArrayEPh
-00017066   _ZN6MSP4303ADC26SingleReadValueAsCharArrayENS_10ADCChannelE
-000177be   _ZN6MSP4303ADCC1Ev
-000177be   _ZN6MSP4303ADCC2Ev
-0001777a   _ZN6MSP4303I2C4SendEPh
-00017178   _ZN6MSP4303I2CC1ENS_3BUSEPFvPhjE
-00017178   _ZN6MSP4303I2CC2ENS_3BUSEPFvPhjE
-00017742   _ZN6MSP4303I2CD0Ev
-000177c0   _ZN6MSP4303I2CD1Ev
-000177c0   _ZN6MSP4303I2CD2Ev
-00015c74   _ZN6MSP4304UART4SendEPhj
-00016020   _ZN6MSP4304UARTC1ENS_3BUSEmPFvhPhjE
-00016020   _ZN6MSP4304UARTC2ENS_3BUSEmPFvhPhjE
-00003897   _ZN6MSP4304busyE
-00012428   _ZN6MSP4304rena11CheckConfigEv
-00010f6c   _ZN6MSP4304rena13ConfigureRenaEPNS_13channelconfigEhNS_6pulsarES3_S3_
-00016860   _ZN6MSP4304rena9ReloadSINEmjNS_6pulsarES1_Ph
-000177c2   _ZN6MSP4304renaC1Ev
-000177c2   _ZN6MSP4304renaC2Ev
-00016bb6   _ZN6MSP4305Timer4StopEv
-0001643e   _ZN6MSP4305Timer5StartEj
-00016de0   _ZN6MSP4305TimerC1ENS_5TIMEREPFvvE
-00016de0   _ZN6MSP4305TimerC2ENS_5TIMEREPFvvE
-0000388e   _ZN6MSP4305ValueE
+0000388b   _ZN6MSP43015IsDataExcpectedE
+00003898   _ZN6MSP43016ADCInterruptFlagE
+00003860   _ZN6MSP43016SelectedTA0TimerE
+00003861   _ZN6MSP43016SelectedTA1TimerE
+000045e4   _ZN6MSP43016TimerA0InterruptE
+000045e8   _ZN6MSP43016TimerA1InterruptE
+000045ec   _ZN6MSP43016TimerB0InterruptE
+000045f0   _ZN6MSP43018TimerA0_1InterruptE
+000045f4   _ZN6MSP43018TimerA1_1InterruptE
+00003899   _ZN6MSP4301iE
+000045f8   _ZN6MSP43020interruptVectorPORT2E
+00017200   _ZN6MSP4303ADC15SingleReadValueENS_10ADCChannelE
+00016a7a   _ZN6MSP4303ADC17SingleReadVoltageENS_10ADCChannelE
+00014344   _ZN6MSP4303ADC24ReadAllValuesToCharArrayEPh
+00017172   _ZN6MSP4303ADC26SingleReadValueAsCharArrayENS_10ADCChannelE
+000178ca   _ZN6MSP4303ADCC1Ev
+000178ca   _ZN6MSP4303ADCC2Ev
+00017886   _ZN6MSP4303I2C4SendEPh
+00017284   _ZN6MSP4303I2CC1ENS_3BUSEPFvPhjE
+00017284   _ZN6MSP4303I2CC2ENS_3BUSEPFvPhjE
+0001784e   _ZN6MSP4303I2CD0Ev
+000178cc   _ZN6MSP4303I2CD1Ev
+000178cc   _ZN6MSP4303I2CD2Ev
+00015d80   _ZN6MSP4304UART4SendEPhj
+0001612c   _ZN6MSP4304UARTC1ENS_3BUSEmPFvhPhjE
+0001612c   _ZN6MSP4304UARTC2ENS_3BUSEmPFvhPhjE
+0000389f   _ZN6MSP4304busyE
+0001240e   _ZN6MSP4304rena11CheckConfigEv
+00010f52   _ZN6MSP4304rena13ConfigureRenaEPNS_13channelconfigEhNS_6pulsarES3_S3_
+0001696c   _ZN6MSP4304rena9ReloadSINEmjNS_6pulsarES1_Ph
+000178ce   _ZN6MSP4304renaC1Ev
+000178ce   _ZN6MSP4304renaC2Ev
+00016cc2   _ZN6MSP4305Timer4StopEv
+0001654a   _ZN6MSP4305Timer5StartEj
+00016eec   _ZN6MSP4305TimerC1ENS_5TIMEREPFvvE
+00016eec   _ZN6MSP4305TimerC2ENS_5TIMEREPFvvE
+00003896   _ZN6MSP4305ValueE
 00005eac   _ZN6MSP4306Port_2Ev
-000042e6   _ZN6MSP4306RxDataE
-00017714   _ZN6MSP4306pulsar15EnableInterruptEv
-000169ec   _ZN6MSP4306pulsar16GenerateSHRClockEmjS0_Ph
-000174d0   _ZN6MSP4306pulsar3getEv
-0001755c   _ZN6MSP4306pulsar3setEb
-000175e2   _ZN6MSP4306pulsarC1EPhh
-00016fcc   _ZN6MSP4306pulsarC1EPhhNS_13InterruptTypeEPFvvE
-00017478   _ZN6MSP4306pulsarC1EPhhb
-000175e2   _ZN6MSP4306pulsarC2EPhh
-00016fcc   _ZN6MSP4306pulsarC2EPhhNS_13InterruptTypeEPFvvE
-00017478   _ZN6MSP4306pulsarC2EPhhb
-000045f4   _ZN6MSP4307PTxDataE
+000042ee   _ZN6MSP4306RxDataE
+00017820   _ZN6MSP4306pulsar15EnableInterruptEv
+00016af8   _ZN6MSP4306pulsar16GenerateSHRClockEmjS0_Ph
+000175dc   _ZN6MSP4306pulsar3getEv
+00017668   _ZN6MSP4306pulsar3setEb
+000176ee   _ZN6MSP4306pulsarC1EPhh
+000170d8   _ZN6MSP4306pulsarC1EPhhNS_13InterruptTypeEPFvvE
+00017584   _ZN6MSP4306pulsarC1EPhhb
+000176ee   _ZN6MSP4306pulsarC2EPhh
+000170d8   _ZN6MSP4306pulsarC2EPhhNS_13InterruptTypeEPFvvE
+00017584   _ZN6MSP4306pulsarC2EPhhb
+000045fc   _ZN6MSP4307PTxDataE
 00005ec2   _ZN6MSP4309ADC12_ISREv
-00004612   _ZN6MSP4309CharValueE
-00003882   _ZN6MSP4309DataReadyE
-00003896   _ZN6MSP4309RXByteCtrE
-0000385a   _ZN6MSP4309TA0PeriodE
-0000385e   _ZN6MSP4309TA1PeriodE
-00003862   _ZN6MSP4309TB0PeriodE
-0000387c   _ZN6MSP4309TotalDataE
+0000461a   _ZN6MSP4309CharValueE
+0000388a   _ZN6MSP4309DataReadyE
+0000389e   _ZN6MSP4309RXByteCtrE
+00003862   _ZN6MSP4309TA0PeriodE
+00003866   _ZN6MSP4309TA1PeriodE
+0000386a   _ZN6MSP4309TB0PeriodE
+00003884   _ZN6MSP4309TotalDataE
 00006188   _ZTIN10__cxxabiv117__class_type_infoE
 00006194   _ZTIN10__cxxabiv120__si_class_type_infoE
 000061a8   _ZTIN6MSP4303I2CE
@@ -1320,7 +1324,7 @@ address    name
 0000613c   _ZTVN10__cxxabiv117__class_type_infoE
 0000614c   _ZTVN10__cxxabiv120__si_class_type_infoE
 0000615c   _ZTVN6MSP4303I2CE
-0001774c   _ZdlPv
+00017858   _ZdlPv
 00005c00   __STACK_END
 000000a0   __STACK_SIZE
 000000a0   __SYSMEM_SIZE
@@ -1330,16 +1334,16 @@ address    name
 000061ea   __TI_Handler_Table_Limit
 00005ed6   __TI_INITARRAY_Base
 00005eda   __TI_INITARRAY_Limit
-0001778e   __TI_ISR_TRAP
+0001789a   __TI_ISR_TRAP
 00000001   __TI_args_main
-000045f8   __TI_cleanup_ptr
-0001769c   __TI_decompress_none
-000177a0   __TI_decompress_rle24
-000045fc   __TI_dtors_ptr
+00004600   __TI_cleanup_ptr
+000177a8   __TI_decompress_none
+000178ac   __TI_decompress_rle24
+00004604   __TI_dtors_ptr
 00000001   __TI_exit
-000134ca   __TI_frcaddd
-00011960   __TI_frcdivd
-0001272c   __TI_frcmpyd
+000134b0   __TI_frcaddd
+00011946   __TI_frcdivd
+00012712   __TI_frcmpyd
 0000ffd2   __TI_int41
 0000ffd4   __TI_int42
 0000ffd6   __TI_int43
@@ -1362,119 +1366,119 @@ address    name
 0000fff8   __TI_int60
 0000fffa   __TI_int61
 0000fffc   __TI_int62
-0001623c   __TI_renormd
-000174f6   __TI_zero_init
+00016348   __TI_renormd
+00017602   __TI_zero_init
 ffffffff   __binit__
 ffffffff   __c_args__
-000177b2   __cxa_atexit
-00016e36   __cxa_finalize
-00017794   __cxa_ia64_exit
-00004600   __dso_handle
-00012a10   __mspabi_addd
-00015ace   __mspabi_cmpd
-00013b90   __mspabi_divd
-00016d30   __mspabi_divul
-0001768a   __mspabi_fixdu
-00016b4e   __mspabi_fixdul
-0001779a   __mspabi_fltud
-00016a6a   __mspabi_fltuld
-00013248   __mspabi_mpyd
-0001763a   __mspabi_mpyi_f5hw
-0001751a   __mspabi_mpyl_f5hw
-00016d30   __mspabi_remul
-000176f4   __mspabi_slll
-0001726a   __mspabi_slll_1
-00017246   __mspabi_slll_10
-00017242   __mspabi_slll_11
-0001723e   __mspabi_slll_12
-0001723a   __mspabi_slll_13
-00017236   __mspabi_slll_14
-00017232   __mspabi_slll_15
-00017266   __mspabi_slll_2
-00017262   __mspabi_slll_3
-0001725e   __mspabi_slll_4
-0001725a   __mspabi_slll_5
-00017256   __mspabi_slll_6
-00017252   __mspabi_slll_7
-0001724e   __mspabi_slll_8
-0001724a   __mspabi_slll_9
-00017760   __mspabi_srai
-000176e4   __mspabi_sral
-0001722c   __mspabi_sral_1
-00017208   __mspabi_sral_10
-00017204   __mspabi_sral_11
-00017200   __mspabi_sral_12
-000171fc   __mspabi_sral_13
-000171f8   __mspabi_sral_14
-000171f4   __mspabi_sral_15
-00017228   __mspabi_sral_2
-00017224   __mspabi_sral_3
-00017220   __mspabi_sral_4
-0001721c   __mspabi_sral_5
-00017218   __mspabi_sral_6
-00017214   __mspabi_sral_7
-00017210   __mspabi_sral_8
-0001720c   __mspabi_sral_9
-00017704   __mspabi_srll
-000172a8   __mspabi_srll_1
-00017284   __mspabi_srll_10
-00017280   __mspabi_srll_11
-0001727c   __mspabi_srll_12
-00017278   __mspabi_srll_13
-00017274   __mspabi_srll_14
-00017270   __mspabi_srll_15
-000172a4   __mspabi_srll_2
-000172a0   __mspabi_srll_3
-0001729c   __mspabi_srll_4
-00017298   __mspabi_srll_5
-00017294   __mspabi_srll_6
-00017290   __mspabi_srll_7
-0001728c   __mspabi_srll_8
-00017288   __mspabi_srll_9
-0001419c   __sti___8_main_cpp_TCLK
-00016ae0   _auto_init_hold_wdt
+000178be   __cxa_atexit
+00016f42   __cxa_finalize
+000178a0   __cxa_ia64_exit
+00004608   __dso_handle
+000129f6   __mspabi_addd
+00015bda   __mspabi_cmpd
+00013b76   __mspabi_divd
+00016e3c   __mspabi_divul
+00017796   __mspabi_fixdu
+00016c5a   __mspabi_fixdul
+000178a6   __mspabi_fltud
+00016b76   __mspabi_fltuld
+0001322e   __mspabi_mpyd
+00017746   __mspabi_mpyi_f5hw
+00017626   __mspabi_mpyl_f5hw
+00016e3c   __mspabi_remul
+00017800   __mspabi_slll
+00017376   __mspabi_slll_1
+00017352   __mspabi_slll_10
+0001734e   __mspabi_slll_11
+0001734a   __mspabi_slll_12
+00017346   __mspabi_slll_13
+00017342   __mspabi_slll_14
+0001733e   __mspabi_slll_15
+00017372   __mspabi_slll_2
+0001736e   __mspabi_slll_3
+0001736a   __mspabi_slll_4
+00017366   __mspabi_slll_5
+00017362   __mspabi_slll_6
+0001735e   __mspabi_slll_7
+0001735a   __mspabi_slll_8
+00017356   __mspabi_slll_9
+0001786c   __mspabi_srai
+000177f0   __mspabi_sral
+00017338   __mspabi_sral_1
+00017314   __mspabi_sral_10
+00017310   __mspabi_sral_11
+0001730c   __mspabi_sral_12
+00017308   __mspabi_sral_13
+00017304   __mspabi_sral_14
+00017300   __mspabi_sral_15
+00017334   __mspabi_sral_2
+00017330   __mspabi_sral_3
+0001732c   __mspabi_sral_4
+00017328   __mspabi_sral_5
+00017324   __mspabi_sral_6
+00017320   __mspabi_sral_7
+0001731c   __mspabi_sral_8
+00017318   __mspabi_sral_9
+00017810   __mspabi_srll
+000173b4   __mspabi_srll_1
+00017390   __mspabi_srll_10
+0001738c   __mspabi_srll_11
+00017388   __mspabi_srll_12
+00017384   __mspabi_srll_13
+00017380   __mspabi_srll_14
+0001737c   __mspabi_srll_15
+000173b0   __mspabi_srll_2
+000173ac   __mspabi_srll_3
+000173a8   __mspabi_srll_4
+000173a4   __mspabi_srll_5
+000173a0   __mspabi_srll_6
+0001739c   __mspabi_srll_7
+00017398   __mspabi_srll_8
+00017394   __mspabi_srll_9
+00014182   __sti___8_main_cpp_TCLK
+00016bec   _auto_init_hold_wdt
 00005e90   _c_int00
 00005e90   _c_int00_noargs
-00003886   _lock
-000177c4   _nop
+0000388e   _lock
+000178d0   _nop
 0000fffe   _reset_vector
 00005b60   _stack
-0000461c   _sys_memory
-00016c7a   _system_pre_init
-0000388a   _unlock
-000177b6   abort
-0000453c   adc
+00004624   _sys_memory
+00016d86   _system_pre_init
+00003892   _unlock
+000178c2   abort
+00004544   adc
 ffffffff   binit
-000171b6   clust2sect
-00004598   dir
-00014b86   disk_initialize
-0001561a   disk_ioctl
-00016622   disk_read
-0001753c   disk_status
-00015df0   disk_write
-00004614   errCode
-0001744a   exit
-0001760e   f_close
-0001371c   f_lseek
-0001738c   f_mount
-0001396c   f_open
-00016396   f_opendir
-00013faa   f_read
-000164e2   f_sync
-00012faa   f_write
-0000389c   fatfs
-00004574   file
-00016746   free
-00014cca   get_fat
-00017756   get_fattime
-000158f2   main
-00015f66   malloc
-00017664   memcpy
-00017624   memset
-00017136   minit
-0000454e   pc
-0001487e   put_fat
-00004604   rtcAlarm_Callback
+000172c2   clust2sect
+000045a0   dir
+00014b6c   disk_initialize
+00015726   disk_ioctl
+0001672e   disk_read
+00017648   disk_status
+00015efc   disk_write
+0000461c   errCode
+00017556   exit
+0001771a   f_close
+00013702   f_lseek
+00017498   f_mount
+00013952   f_open
+000164a2   f_opendir
+00013f90   f_read
+000165ee   f_sync
+00012f90   f_write
+000038a4   fatfs
+0000457c   file
+00016852   free
+00014cb0   get_fat
+00017862   get_fattime
+000159fe   main
+00016072   malloc
+00017770   memcpy
+00017730   memset
+00017242   minit
+00004556   pc
+00014864   put_fat
+0000460c   rtcAlarm_Callback
 0000382e   second
 
 
@@ -2176,96 +2180,98 @@ address    name
 0000383a   RawDataNumber
 0000383e   SpectrumSingleNumber
 00003842   SpectrumDoubleNumber
-00003846   ConfigNumber
-0000384a   HitNumber
-0000384c   CommandFileNumber
-00003850   CommandOffsetNumber
-00003854   CommandLengthNumber
-00003858   _ZN6MSP43016SelectedTA0TimerE
-00003859   _ZN6MSP43016SelectedTA1TimerE
-0000385a   _ZN6MSP4309TA0PeriodE
-0000385c   _ZN6MSP43010TA0CounterE
-0000385e   _ZN6MSP4309TA1PeriodE
-00003860   _ZN6MSP43010TA1CounterE
-00003862   _ZN6MSP4309TB0PeriodE
-00003864   _ZN6MSP43010TB0CounterE
-00003866   _ZN6MSP43011TA0_1PeriodE
-00003868   _ZN6MSP43012TA0_1CounterE
-0000386a   _ZN6MSP43011TA1_1PeriodE
-0000386c   _ZN6MSP43012TA1_1CounterE
-0000386e   RTC_AsCharArray
-0000387c   _ZN6MSP4309TotalDataE
-0000387e   _ZN6MSP43011DataCounterE
-00003880   _ZN6MSP43013HeaderCounterE
-00003882   _ZN6MSP4309DataReadyE
-00003883   _ZN6MSP43015IsDataExcpectedE
-00003884   _ZN6MSP43010UART_PhaseE
-00003886   _lock
-0000388a   _unlock
-0000388e   _ZN6MSP4305ValueE
-00003890   _ZN6MSP43016ADCInterruptFlagE
-00003891   _ZN6MSP4301iE
-00003896   _ZN6MSP4309RXByteCtrE
-00003897   _ZN6MSP4304busyE
-00003898   INS
-0000389c   fatfs
-00003aca   HitBuffer
-00003ce6   Packet
-00003ee6   ReceivedData
-000040e6   _ZN6MSP43010DataBufferE
-000042e6   _ZN6MSP4306RxDataE
-000043e6   ChannelConfigs
-000044be   TCLK
-000044c4   READ
-000044ca   SHRCLK
-000044d0   SIN
-000044d6   TIN
-000044dc   CIN
-000044e2   CSHIFT
-000044e8   CS
-000044ee   CLS
-000044f4   CLF
-000044fa   ACQ
-00004500   ENABLE_5V
-00004506   ENABLE_HV
-0000450c   ENABLE_HV_POWER
-00004512   ENABLE_ADC
-00004518   TEST
-0000451e   TS1
-00004524   TS2
-0000452a   TOUT
-00004530   SOUT
-00004536   OVRFLOW
-0000453c   adc
-0000453e   ADCACQTimer
-00004540   RENA
-00004548   OBC
-0000454e   pc
-00004550   TriggeredChannels
-00004574   file
-00004598   dir
-000045b4   _ZN6MSP43012HeaderBufferE
-000045c0   RawDataFileNumberChar
-000045c4   RawDataLengthNumberChar
-000045c8   Sec_Callback
-000045cc   SpectrumDataFileNumberChar
-000045d0   SpectrumDataLengthNumberChar
-000045d4   _ZN6MSP43011I2C_RECEIVEE
-000045d8   _ZN6MSP43013CommandVectorE
-000045dc   _ZN6MSP43016TimerA0InterruptE
-000045e0   _ZN6MSP43016TimerA1InterruptE
-000045e4   _ZN6MSP43016TimerB0InterruptE
-000045e8   _ZN6MSP43018TimerA0_1InterruptE
-000045ec   _ZN6MSP43018TimerA1_1InterruptE
-000045f0   _ZN6MSP43020interruptVectorPORT2E
-000045f4   _ZN6MSP4307PTxDataE
-000045f8   __TI_cleanup_ptr
-000045fc   __TI_dtors_ptr
-00004600   __dso_handle
-00004604   rtcAlarm_Callback
-00004612   _ZN6MSP4309CharValueE
-00004614   errCode
-0000461c   _sys_memory
+00003846   AnodeOnlySpectrumNumber
+0000384a   LightCurveDataNumber
+0000384e   ConfigNumber
+00003852   HitNumber
+00003854   CommandFileNumber
+00003858   CommandOffsetNumber
+0000385c   CommandLengthNumber
+00003860   _ZN6MSP43016SelectedTA0TimerE
+00003861   _ZN6MSP43016SelectedTA1TimerE
+00003862   _ZN6MSP4309TA0PeriodE
+00003864   _ZN6MSP43010TA0CounterE
+00003866   _ZN6MSP4309TA1PeriodE
+00003868   _ZN6MSP43010TA1CounterE
+0000386a   _ZN6MSP4309TB0PeriodE
+0000386c   _ZN6MSP43010TB0CounterE
+0000386e   _ZN6MSP43011TA0_1PeriodE
+00003870   _ZN6MSP43012TA0_1CounterE
+00003872   _ZN6MSP43011TA1_1PeriodE
+00003874   _ZN6MSP43012TA1_1CounterE
+00003876   RTC_AsCharArray
+00003884   _ZN6MSP4309TotalDataE
+00003886   _ZN6MSP43011DataCounterE
+00003888   _ZN6MSP43013HeaderCounterE
+0000388a   _ZN6MSP4309DataReadyE
+0000388b   _ZN6MSP43015IsDataExcpectedE
+0000388c   _ZN6MSP43010UART_PhaseE
+0000388e   _lock
+00003892   _unlock
+00003896   _ZN6MSP4305ValueE
+00003898   _ZN6MSP43016ADCInterruptFlagE
+00003899   _ZN6MSP4301iE
+0000389e   _ZN6MSP4309RXByteCtrE
+0000389f   _ZN6MSP4304busyE
+000038a0   INS
+000038a4   fatfs
+00003ad2   HitBuffer
+00003cee   Packet
+00003eee   ReceivedData
+000040ee   _ZN6MSP43010DataBufferE
+000042ee   _ZN6MSP4306RxDataE
+000043ee   ChannelConfigs
+000044c6   TCLK
+000044cc   READ
+000044d2   SHRCLK
+000044d8   SIN
+000044de   TIN
+000044e4   CIN
+000044ea   CSHIFT
+000044f0   CS
+000044f6   CLS
+000044fc   CLF
+00004502   ACQ
+00004508   ENABLE_5V
+0000450e   ENABLE_HV
+00004514   ENABLE_HV_POWER
+0000451a   ENABLE_ADC
+00004520   TEST
+00004526   TS1
+0000452c   TS2
+00004532   TOUT
+00004538   SOUT
+0000453e   OVRFLOW
+00004544   adc
+00004546   ADCACQTimer
+00004548   RENA
+00004550   OBC
+00004556   pc
+00004558   TriggeredChannels
+0000457c   file
+000045a0   dir
+000045bc   _ZN6MSP43012HeaderBufferE
+000045c8   RawDataFileNumberChar
+000045cc   RawDataLengthNumberChar
+000045d0   Sec_Callback
+000045d4   SpectrumDataFileNumberChar
+000045d8   SpectrumDataLengthNumberChar
+000045dc   _ZN6MSP43011I2C_RECEIVEE
+000045e0   _ZN6MSP43013CommandVectorE
+000045e4   _ZN6MSP43016TimerA0InterruptE
+000045e8   _ZN6MSP43016TimerA1InterruptE
+000045ec   _ZN6MSP43016TimerB0InterruptE
+000045f0   _ZN6MSP43018TimerA0_1InterruptE
+000045f4   _ZN6MSP43018TimerA1_1InterruptE
+000045f8   _ZN6MSP43020interruptVectorPORT2E
+000045fc   _ZN6MSP4307PTxDataE
+00004600   __TI_cleanup_ptr
+00004604   __TI_dtors_ptr
+00004608   __dso_handle
+0000460c   rtcAlarm_Callback
+0000461a   _ZN6MSP4309CharValueE
+0000461c   errCode
+00004624   _sys_memory
 00005b60   _stack
 00005c00   _ZN6MSP43011USCI_A0_ISREv
 00005c00   __STACK_END
@@ -2320,186 +2326,187 @@ address    name
 0000fffe   _reset_vector
 00010000   _Z18UARTCommandHandler9UART_Mode
 00010806   _Z16RunOperationMode14Operation_Mode
-00010f6c   _ZN6MSP4304rena13ConfigureRenaEPNS_13channelconfigEhNS_6pulsarES3_S3_
-00011960   __TI_frcdivd
-00011db2   _Z13GetSystemInfoPhR14Operation_ModeRjS2_RmS3_S3_S3_
-00012112   _Z16UpdateSystemInfoPh14Operation_Modejjmmmm
-00012428   _ZN6MSP4304rena11CheckConfigEv
-0001272c   __TI_frcmpyd
-00012a10   __mspabi_addd
-00012ce8   _Z11OBC_HandlerPhj
-00012faa   f_write
-00013248   __mspabi_mpyd
-000134ca   __TI_frcaddd
-0001371c   f_lseek
-0001396c   f_open
-00013b90   __mspabi_divd
-00013db2   _Z12TS_Interruptv
-00013faa   f_read
-0001419c   __sti___8_main_cpp_TCLK
-0001435e   _ZN6MSP4303ADC24ReadAllValuesToCharArrayEPh
-0001451e   _Z21AddSpectrumDoubleDataPA100_jm
-000146ce   _Z21AddSpectrumSingleDataPA100_jm
-0001487e   put_fat
-00014b86   disk_initialize
-00014cca   get_fat
-00014e0a   _Z11ReportEvent13StatusReportsm
-00015078   _Z11ReadRawDataPhjmm
-000151a4   _Z16ReadSpectrumDataPhjmm
-000152d0   _Z10AddRawDataPhjm
-0001561a   disk_ioctl
-0001570e   _Z20GetRawDataFileLengthm
-00015800   _Z25GetSpectrumDataFileLengthm
-000158f2   main
-00015ace   __mspabi_cmpd
-00015ba6   _Z11ReportEvent13StatusReports
-00015c74   _ZN6MSP4304UART4SendEPhj
-00015df0   disk_write
-00015eac   _Z17getRTCasByteArrayPh
-00015f66   malloc
-00016020   _ZN6MSP4304UARTC1ENS_3BUSEmPFvhPhjE
-00016020   _ZN6MSP4304UARTC2ENS_3BUSEmPFvhPhjE
-0001623c   __TI_renormd
-000162ee   _Z18AssembleDataPacketPhj
-00016396   f_opendir
-0001643e   _ZN6MSP4305Timer5StartEj
-000164e2   f_sync
-00016622   disk_read
-00016746   free
-000167d4   _Z20ADCACQTimerInterruptv
-00016860   _ZN6MSP4304rena9ReloadSINEmjNS_6pulsarES1_Ph
-0001696e   _ZN6MSP4303ADC17SingleReadVoltageENS_10ADCChannelE
-000169ec   _ZN6MSP4306pulsar16GenerateSHRClockEmjS0_Ph
-00016a6a   __mspabi_fltuld
-00016ae0   _auto_init_hold_wdt
-00016b4e   __mspabi_fixdul
-00016bb6   _ZN6MSP4305Timer4StopEv
-00016c7a   _system_pre_init
-00016d30   __mspabi_divul
-00016d30   __mspabi_remul
-00016de0   _ZN6MSP4305TimerC1ENS_5TIMEREPFvvE
-00016de0   _ZN6MSP4305TimerC2ENS_5TIMEREPFvvE
-00016e36   __cxa_finalize
-00016e8c   _Z20ConvertToEnergyAnodedh
-00016f30   SetVcoreUp
-00016fcc   _ZN6MSP4306pulsarC1EPhhNS_13InterruptTypeEPFvvE
-00016fcc   _ZN6MSP4306pulsarC2EPhhNS_13InterruptTypeEPFvvE
-0001701a   _Z7UlToStrPcmh
-00017066   _ZN6MSP4303ADC26SingleReadValueAsCharArrayENS_10ADCChannelE
-000170ae   SDCard_init
-000170f4   _ZN6MSP4303ADC15SingleReadValueENS_10ADCChannelE
-00017136   minit
-00017178   _ZN6MSP4303I2CC1ENS_3BUSEPFvPhjE
-00017178   _ZN6MSP4303I2CC2ENS_3BUSEPFvPhjE
-000171b6   clust2sect
-000171f4   __mspabi_sral_15
-000171f8   __mspabi_sral_14
-000171fc   __mspabi_sral_13
-00017200   __mspabi_sral_12
-00017204   __mspabi_sral_11
-00017208   __mspabi_sral_10
-0001720c   __mspabi_sral_9
-00017210   __mspabi_sral_8
-00017214   __mspabi_sral_7
-00017218   __mspabi_sral_6
-0001721c   __mspabi_sral_5
-00017220   __mspabi_sral_4
-00017224   __mspabi_sral_3
-00017228   __mspabi_sral_2
-0001722c   __mspabi_sral_1
-00017232   __mspabi_slll_15
-00017236   __mspabi_slll_14
-0001723a   __mspabi_slll_13
-0001723e   __mspabi_slll_12
-00017242   __mspabi_slll_11
-00017246   __mspabi_slll_10
-0001724a   __mspabi_slll_9
-0001724e   __mspabi_slll_8
-00017252   __mspabi_slll_7
-00017256   __mspabi_slll_6
-0001725a   __mspabi_slll_5
-0001725e   __mspabi_slll_4
-00017262   __mspabi_slll_3
-00017266   __mspabi_slll_2
-0001726a   __mspabi_slll_1
-00017270   __mspabi_srll_15
-00017274   __mspabi_srll_14
-00017278   __mspabi_srll_13
-0001727c   __mspabi_srll_12
-00017280   __mspabi_srll_11
-00017284   __mspabi_srll_10
-00017288   __mspabi_srll_9
-0001728c   __mspabi_srll_8
-00017290   __mspabi_srll_7
-00017294   __mspabi_srll_6
-00017298   __mspabi_srll_5
-0001729c   __mspabi_srll_4
-000172a0   __mspabi_srll_3
-000172a4   __mspabi_srll_2
-000172a8   __mspabi_srll_1
-000172ae   _Z13CommandVectorhPhj
-000172ea   SDCard_readFrame
-00017358   _Z7initRTCiiiiiii
-0001738c   f_mount
-000173be   _Z8fat_initv
-000173ee   SDCard_sendFrame
-0001741c   _Z24CompareCharArrayToStringPhPKcj
-0001744a   exit
-00017478   _ZN6MSP4306pulsarC1EPhhb
-00017478   _ZN6MSP4306pulsarC2EPhhb
-000174d0   _ZN6MSP4306pulsar3getEv
-000174f6   __TI_zero_init
-0001751a   __mspabi_mpyl_f5hw
-0001753c   disk_status
-0001755c   _ZN6MSP4306pulsar3setEb
-0001757a   _Z34DetermineNumberOfTriggeredChannelsPhh
-00017596   _Z18RTCSecondInterruptv
-000175b0   _Z5delayj
-000175e2   _ZN6MSP4306pulsarC1EPhh
-000175e2   _ZN6MSP4306pulsarC2EPhh
-0001760e   f_close
-00017624   memset
-0001763a   __mspabi_mpyi_f5hw
-00017664   memcpy
-00017678   SDCard_fastMode
-0001768a   __mspabi_fixdu
-0001769c   __TI_decompress_none
-000176e4   __mspabi_sral
-000176f4   __mspabi_slll
-00017704   __mspabi_srll
-00017714   _ZN6MSP4306pulsar15EnableInterruptEv
-00017722   _Z9enableSecPFvvE
-0001772e   _ZN10__cxxabiv117__class_type_infoD0Ev
-00017738   _ZN10__cxxabiv120__si_class_type_infoD0Ev
-00017742   _ZN6MSP4303I2CD0Ev
-0001774c   _ZdlPv
-00017756   get_fattime
-00017760   __mspabi_srai
-0001776a   _Z10disableSecv
-00017772   _Z8startRTCv
-0001777a   _ZN6MSP4303I2C4SendEPh
-00017782   SDCard_setCSHigh
-00017788   SDCard_setCSLow
-0001778e   __TI_ISR_TRAP
-00017794   __cxa_ia64_exit
-0001779a   __mspabi_fltud
-000177a0   __TI_decompress_rle24
-000177b2   __cxa_atexit
-000177b6   C$$EXIT
-000177b6   abort
-000177ba   _ZN10__cxxabiv117__class_type_infoD1Ev
-000177ba   _ZN10__cxxabiv117__class_type_infoD2Ev
-000177bc   _ZN10__cxxabiv120__si_class_type_infoD1Ev
-000177bc   _ZN10__cxxabiv120__si_class_type_infoD2Ev
-000177be   _ZN6MSP4303ADCC1Ev
-000177be   _ZN6MSP4303ADCC2Ev
-000177c0   _ZN6MSP4303I2CD1Ev
-000177c0   _ZN6MSP4303I2CD2Ev
-000177c2   _ZN6MSP4304renaC1Ev
-000177c2   _ZN6MSP4304renaC2Ev
-000177c4   _nop
+00010f52   _ZN6MSP4304rena13ConfigureRenaEPNS_13channelconfigEhNS_6pulsarES3_S3_
+00011946   __TI_frcdivd
+00011d98   _Z13GetSystemInfoPhR14Operation_ModeRjS2_RmS3_S3_S3_
+000120f8   _Z16UpdateSystemInfoPh14Operation_Modejjmmmm
+0001240e   _ZN6MSP4304rena11CheckConfigEv
+00012712   __TI_frcmpyd
+000129f6   __mspabi_addd
+00012cce   _Z11OBC_HandlerPhj
+00012f90   f_write
+0001322e   __mspabi_mpyd
+000134b0   __TI_frcaddd
+00013702   f_lseek
+00013952   f_open
+00013b76   __mspabi_divd
+00013d98   _Z12TS_Interruptv
+00013f90   f_read
+00014182   __sti___8_main_cpp_TCLK
+00014344   _ZN6MSP4303ADC24ReadAllValuesToCharArrayEPh
+00014504   _Z21AddSpectrumDoubleDataPA100_jm
+000146b4   _Z21AddSpectrumSingleDataPA100_jm
+00014864   put_fat
+00014b6c   disk_initialize
+00014cb0   get_fat
+00014df0   _Z11ReportEvent13StatusReportsm
+0001505e   _Z11ReadRawDataPhjmm
+0001518a   _Z16ReadSpectrumDataPhjmm
+000152b6   _Z10AddRawDataPhjm
+000153e0   _Z17AddLightCurveDataPjm
+00015726   disk_ioctl
+0001581a   _Z20GetRawDataFileLengthm
+0001590c   _Z25GetSpectrumDataFileLengthm
+000159fe   main
+00015bda   __mspabi_cmpd
+00015cb2   _Z11ReportEvent13StatusReports
+00015d80   _ZN6MSP4304UART4SendEPhj
+00015efc   disk_write
+00015fb8   _Z17getRTCasByteArrayPh
+00016072   malloc
+0001612c   _ZN6MSP4304UARTC1ENS_3BUSEmPFvhPhjE
+0001612c   _ZN6MSP4304UARTC2ENS_3BUSEmPFvhPhjE
+00016348   __TI_renormd
+000163fa   _Z18AssembleDataPacketPhj
+000164a2   f_opendir
+0001654a   _ZN6MSP4305Timer5StartEj
+000165ee   f_sync
+0001672e   disk_read
+00016852   free
+000168e0   _Z20ADCACQTimerInterruptv
+0001696c   _ZN6MSP4304rena9ReloadSINEmjNS_6pulsarES1_Ph
+00016a7a   _ZN6MSP4303ADC17SingleReadVoltageENS_10ADCChannelE
+00016af8   _ZN6MSP4306pulsar16GenerateSHRClockEmjS0_Ph
+00016b76   __mspabi_fltuld
+00016bec   _auto_init_hold_wdt
+00016c5a   __mspabi_fixdul
+00016cc2   _ZN6MSP4305Timer4StopEv
+00016d86   _system_pre_init
+00016e3c   __mspabi_divul
+00016e3c   __mspabi_remul
+00016eec   _ZN6MSP4305TimerC1ENS_5TIMEREPFvvE
+00016eec   _ZN6MSP4305TimerC2ENS_5TIMEREPFvvE
+00016f42   __cxa_finalize
+00016f98   _Z20ConvertToEnergyAnodedh
+0001703c   SetVcoreUp
+000170d8   _ZN6MSP4306pulsarC1EPhhNS_13InterruptTypeEPFvvE
+000170d8   _ZN6MSP4306pulsarC2EPhhNS_13InterruptTypeEPFvvE
+00017126   _Z7UlToStrPcmh
+00017172   _ZN6MSP4303ADC26SingleReadValueAsCharArrayENS_10ADCChannelE
+000171ba   SDCard_init
+00017200   _ZN6MSP4303ADC15SingleReadValueENS_10ADCChannelE
+00017242   minit
+00017284   _ZN6MSP4303I2CC1ENS_3BUSEPFvPhjE
+00017284   _ZN6MSP4303I2CC2ENS_3BUSEPFvPhjE
+000172c2   clust2sect
+00017300   __mspabi_sral_15
+00017304   __mspabi_sral_14
+00017308   __mspabi_sral_13
+0001730c   __mspabi_sral_12
+00017310   __mspabi_sral_11
+00017314   __mspabi_sral_10
+00017318   __mspabi_sral_9
+0001731c   __mspabi_sral_8
+00017320   __mspabi_sral_7
+00017324   __mspabi_sral_6
+00017328   __mspabi_sral_5
+0001732c   __mspabi_sral_4
+00017330   __mspabi_sral_3
+00017334   __mspabi_sral_2
+00017338   __mspabi_sral_1
+0001733e   __mspabi_slll_15
+00017342   __mspabi_slll_14
+00017346   __mspabi_slll_13
+0001734a   __mspabi_slll_12
+0001734e   __mspabi_slll_11
+00017352   __mspabi_slll_10
+00017356   __mspabi_slll_9
+0001735a   __mspabi_slll_8
+0001735e   __mspabi_slll_7
+00017362   __mspabi_slll_6
+00017366   __mspabi_slll_5
+0001736a   __mspabi_slll_4
+0001736e   __mspabi_slll_3
+00017372   __mspabi_slll_2
+00017376   __mspabi_slll_1
+0001737c   __mspabi_srll_15
+00017380   __mspabi_srll_14
+00017384   __mspabi_srll_13
+00017388   __mspabi_srll_12
+0001738c   __mspabi_srll_11
+00017390   __mspabi_srll_10
+00017394   __mspabi_srll_9
+00017398   __mspabi_srll_8
+0001739c   __mspabi_srll_7
+000173a0   __mspabi_srll_6
+000173a4   __mspabi_srll_5
+000173a8   __mspabi_srll_4
+000173ac   __mspabi_srll_3
+000173b0   __mspabi_srll_2
+000173b4   __mspabi_srll_1
+000173ba   _Z13CommandVectorhPhj
+000173f6   SDCard_readFrame
+00017464   _Z7initRTCiiiiiii
+00017498   f_mount
+000174ca   _Z8fat_initv
+000174fa   SDCard_sendFrame
+00017528   _Z24CompareCharArrayToStringPhPKcj
+00017556   exit
+00017584   _ZN6MSP4306pulsarC1EPhhb
+00017584   _ZN6MSP4306pulsarC2EPhhb
+000175dc   _ZN6MSP4306pulsar3getEv
+00017602   __TI_zero_init
+00017626   __mspabi_mpyl_f5hw
+00017648   disk_status
+00017668   _ZN6MSP4306pulsar3setEb
+00017686   _Z34DetermineNumberOfTriggeredChannelsPhh
+000176a2   _Z18RTCSecondInterruptv
+000176bc   _Z5delayj
+000176ee   _ZN6MSP4306pulsarC1EPhh
+000176ee   _ZN6MSP4306pulsarC2EPhh
+0001771a   f_close
+00017730   memset
+00017746   __mspabi_mpyi_f5hw
+00017770   memcpy
+00017784   SDCard_fastMode
+00017796   __mspabi_fixdu
+000177a8   __TI_decompress_none
+000177f0   __mspabi_sral
+00017800   __mspabi_slll
+00017810   __mspabi_srll
+00017820   _ZN6MSP4306pulsar15EnableInterruptEv
+0001782e   _Z9enableSecPFvvE
+0001783a   _ZN10__cxxabiv117__class_type_infoD0Ev
+00017844   _ZN10__cxxabiv120__si_class_type_infoD0Ev
+0001784e   _ZN6MSP4303I2CD0Ev
+00017858   _ZdlPv
+00017862   get_fattime
+0001786c   __mspabi_srai
+00017876   _Z10disableSecv
+0001787e   _Z8startRTCv
+00017886   _ZN6MSP4303I2C4SendEPh
+0001788e   SDCard_setCSHigh
+00017894   SDCard_setCSLow
+0001789a   __TI_ISR_TRAP
+000178a0   __cxa_ia64_exit
+000178a6   __mspabi_fltud
+000178ac   __TI_decompress_rle24
+000178be   __cxa_atexit
+000178c2   C$$EXIT
+000178c2   abort
+000178c6   _ZN10__cxxabiv117__class_type_infoD1Ev
+000178c6   _ZN10__cxxabiv117__class_type_infoD2Ev
+000178c8   _ZN10__cxxabiv120__si_class_type_infoD1Ev
+000178c8   _ZN10__cxxabiv120__si_class_type_infoD2Ev
+000178ca   _ZN6MSP4303ADCC1Ev
+000178ca   _ZN6MSP4303ADCC2Ev
+000178cc   _ZN6MSP4303I2CD1Ev
+000178cc   _ZN6MSP4303I2CD2Ev
+000178ce   _ZN6MSP4304renaC1Ev
+000178ce   _ZN6MSP4304renaC2Ev
+000178d0   _nop
 ffffffff   __binit__
 ffffffff   __c_args__
 ffffffff   binit
 
-[1019 symbols]
+[1022 symbols]

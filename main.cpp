@@ -57,6 +57,7 @@ double SpectrumInterval = (MAX_ENERGY_LEVEL - MIN_ENERGY_LEVEL) / NUMBER_OF_ENER
 unsigned int SingleSpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
 unsigned int DoubleSpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
 unsigned int AnodeOnlySpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
+
 unsigned int LightCurve[600] = {0};
 unsigned int second = 0;
 unsigned int TriggerNumber = 0;
@@ -72,6 +73,8 @@ unsigned int WDTNumber = 0;
 unsigned long RawDataNumber = 0;
 unsigned long SpectrumSingleNumber = 0;
 unsigned long SpectrumDoubleNumber = 0;
+unsigned long AnodeOnlySpectrumNumber = 0; // NOT IMPLEMENTED!
+unsigned long LightCurveDataNumber = 0; //
 unsigned long ConfigNumber = 0;
 /*
  *
@@ -304,7 +307,6 @@ void RunOperationMode(Operation_Mode mode)
 		unsigned long MultipleAnodesEventNumber = 0;
 		unsigned long MultipleCathodesEventNumber = 0;
 		unsigned long CathodeOnlyEventNumber = 0;
-		unsigned long AnodeOnlyEventNumber = 0;
 		for(int i = 0; i < 100; i++)
 		{
 			while(!ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, SpectrumSingleNumber));
@@ -406,22 +408,12 @@ void RunOperationMode(Operation_Mode mode)
 				 *
 				 */
 
-				/*
-				 *
-				 * Light Curve
-				 * Hit per Second
-				 *
-				 */
-
 				/*Multiple Events Report*/
 				else if(NumberOfTriggeredAnodes > 2)
 					MultipleAnodesEventNumber++;
 				/*Cathodes only Report*/
 				else if(NumberOfTriggeredAnodes == 0)
 					CathodeOnlyEventNumber++;
-				/*Anodes only Report*/
-				else if(NumberOfTriggeredCathodes == 0)
-					AnodeOnlyEventNumber++;
 				else
 					MultipleCathodesEventNumber++;
 			}
@@ -430,6 +422,8 @@ void RunOperationMode(Operation_Mode mode)
 		SpectrumSingleNumber++;
 		while(!AddSpectrumDoubleData(DoubleSpectrumData, SpectrumDoubleNumber));
 		SpectrumDoubleNumber++;
+		while(!AddLightCurveData(LightCurve, LightCurveDataNumber));
+		LightCurveDataNumber++;
 
 		if(MultipleAnodesEventNumber != 0)
 			while(!ReportEvent(MultipleAnodes, MultipleAnodesEventNumber));
@@ -437,8 +431,6 @@ void RunOperationMode(Operation_Mode mode)
 			while(!ReportEvent(MultipleCathodes, MultipleCathodesEventNumber));
 		if(CathodeOnlyEventNumber != 0)
 			while(!ReportEvent(CathodeOnly, CathodeOnlyEventNumber));
-		if(AnodeOnlyEventNumber != 0)
-			while(!ReportEvent(AnodeOnly, AnodeOnlyEventNumber));
 
 		getRTCasByteArray(RTC_AsCharArray);
 		UpdateSystemInfo(RTC_AsCharArray, LastOperationMode, ExecutionNumber, WDTNumber,

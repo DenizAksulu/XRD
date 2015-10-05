@@ -15,13 +15,17 @@ enum StatusReports {RENA_OK, RENA_FAIL, RENA_FATAL, ADC_OK, ADC_FAIL, ADC_FATAL,
 /*
  * Function Prototypes
  */
+// INFINITE LOOP!!!!! NEEDS TIMEOUT!!!!!
 void fat_init(void);
 
+
+
+/*NEEDS TO BE UPDATED!!*/
 unsigned char GetSystemInfo(unsigned char* RTC_AsCharArray, Operation_Mode &LastOperationMode,
 							unsigned int &ExecutionNumber, unsigned int &WDTNumber,
 							unsigned long &RawDataNumber, unsigned long &SpectrumSingleNumber,
 							unsigned long &SpectrumDoubleNumber, unsigned long &ConfigNumber);
-
+/*NEEDS TO BE UPDATED!!*/
 unsigned char UpdateSystemInfo(unsigned char* RTC_AsCharArray, Operation_Mode LastOperationMode,
 							unsigned int ExecutionNumber, unsigned int WDTNumber,
 							unsigned long RawDataNumber, unsigned long SpectrumSingleNumber,
@@ -32,6 +36,7 @@ unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsig
 unsigned char ReadSpectrumData(unsigned char* RawData, unsigned int DataLength, unsigned long Offset, unsigned long FileNumber);
 unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[100] , unsigned long FileNumber);
 unsigned char AddSpectrumDoubleData(unsigned int (*SpectrumData)[100] , unsigned long FileNumber);
+unsigned char AddLightCurveData(unsigned int* LightCurveData, unsigned long FileNumber);
 unsigned long GetRawDataFileLength(unsigned long RawDataNumber);
 unsigned long GetSpectrumDataFileLength(unsigned long SpectrumSingleNumber);
 unsigned char ReportEvent(StatusReports report);

@@ -20,12 +20,14 @@ FIL file;
 void fat_init(void)
 {
     errCode = (FRESULT)-1;
+    // INFINITE LOOP!!!!! NEEDS TIMEOUT!!!!!
     while (errCode != FR_OK){                               //go until f_open returns FR_OK (function successful)
         errCode = f_mount(0, &fatfs);                       //mount drive number 0
         errCode = f_opendir(&dir, "/");				    	//root directory
     }
 }
 
+/*NEEDS TO BE UPDATED!!*/
 unsigned char GetSystemInfo(unsigned char* RTC_AsCharArray, Operation_Mode &LastOperationMode,
 							unsigned int &ExecutionNumber, unsigned int &WDTNumber,
 							unsigned long &RawDataNumber, unsigned long &SpectrumSingleNumber,
@@ -429,5 +431,38 @@ unsigned long GetSpectrumDataFileLength(unsigned long SpectrumSingleNumber)
 	return FileLength;
 }
 
+unsigned char AddLightCurveData(unsigned int* LightCurveData, unsigned long FileNumber)
+{
+	/*Adjusting File Name*/
+	unsigned int byteswritten = 0;
+	unsigned char index = 0;
+	char FileName[14];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, FileNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 'l';
+	FileName[index++] = 'i';
+	FileName[index++] = 't';
+	FileName[index++] = '\0';
+	/**/
+	/*Open File*/
+	if(f_open(&file, FileName, FA_OPEN_ALWAYS | FA_WRITE) != FR_OK) return 0;
+	/**/
+	/*Write into File*/
+	DWORD FileLength = f_size(&file);
+	if(f_lseek(&file, FileLength) != FR_OK) return 0;
+	/*
+	 * NEEDS TO BE TESTED!!!
+	 */
+	if(f_write(&file, (unsigned char*)LightCurveData, 1200, &byteswritten) != FR_OK) return 0;
+	/**/
+	if(f_close(&file) != FR_OK) return 0;
+	return 1;
+}
 
 
