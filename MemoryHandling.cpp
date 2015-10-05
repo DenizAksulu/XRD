@@ -322,6 +322,50 @@ unsigned char AddSpectrumDoubleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERG
 	}
 	return 1;
 }
+
+unsigned char AddAnodeOnlySpectrumData(unsigned int (*SpectrumData)[NUMBER_OF_ENERGY_INTERVALS] , unsigned long FileNumber)
+{
+	/*Adjusting File Name*/
+	unsigned char SpectrumDataChar[NUMBER_OF_ENERGY_INTERVALS * 2] = {0};
+	unsigned char SpectrumCHAR[2];
+	unsigned int byteswritten = 0;
+	unsigned char index = 0;
+	char FileName[11];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, FileNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 's';
+	FileName[index++] = 'p';
+	FileName[index++] = 'a';
+	FileName[index++] = '\0';
+
+	for(int i = 0; i < 15; i++)
+	{
+		/**/
+		for(int j = 0; j < NUMBER_OF_ENERGY_INTERVALS; j++)
+		{
+			*(unsigned int*)SpectrumCHAR = SpectrumData[i][j];
+			SpectrumDataChar[2*j] = SpectrumCHAR[0];
+			SpectrumDataChar[2*j + 1] = SpectrumCHAR[1];
+		}
+		/**/
+		/*Open File*/
+		if(f_open(&file, FileName, FA_OPEN_ALWAYS | FA_WRITE) != FR_OK) return 0;
+		/**/
+		/*Write into File*/
+		DWORD FileLength = f_size(&file);
+		if(f_lseek(&file, FileLength) != FR_OK) return 0;
+		if(f_write(&file, SpectrumDataChar, NUMBER_OF_ENERGY_INTERVALS*2, &byteswritten) != FR_OK) return 0;
+		/**/
+		if(f_close(&file) != FR_OK) return 0;
+	}
+	return 1;
+}
 unsigned char ReportEvent(StatusReports report)
 {
 	unsigned char index = 0;

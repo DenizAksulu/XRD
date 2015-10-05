@@ -36,6 +36,7 @@ unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsig
 unsigned char ReadSpectrumData(unsigned char* RawData, unsigned int DataLength, unsigned long Offset, unsigned long FileNumber);
 unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[100] , unsigned long FileNumber);
 unsigned char AddSpectrumDoubleData(unsigned int (*SpectrumData)[100] , unsigned long FileNumber);
+unsigned char AddAnodeOnlySpectrumData(unsigned int (*SpectrumData)[100] , unsigned long FileNumber);
 unsigned char AddLightCurveData(unsigned int* LightCurveData, unsigned long FileNumber);
 unsigned long GetRawDataFileLength(unsigned long RawDataNumber);
 unsigned long GetSpectrumDataFileLength(unsigned long SpectrumSingleNumber);

@@ -58,6 +58,7 @@ unsigned int SingleSpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
 unsigned int DoubleSpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
 unsigned int AnodeOnlySpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
 
+//Light Curve variables
 unsigned int LightCurve[600] = {0};
 unsigned int second = 0;
 unsigned int TriggerNumber = 0;
@@ -320,6 +321,7 @@ void RunOperationMode(Operation_Mode mode)
 				double DoubleEnergyLevel[2] = {0};
 				double EnergyLevel = 0;
 				unsigned char n_counter = 0;
+
 				for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
 				{
 					if(HitBuffer[n_counter + 108*m] == 1)
@@ -341,6 +343,7 @@ void RunOperationMode(Operation_Mode mode)
 						NumberOfTriggeredChannels++;
 					}
 				}
+
 				/*Single Spectrum Case*/
 				if(NumberOfTriggeredAnodes == 1 && (NumberOfTriggeredCathodes > 0 && NumberOfTriggeredCathodes < 4))
 				{
@@ -354,6 +357,7 @@ void RunOperationMode(Operation_Mode mode)
 						}
 					}
 				}
+
 				/*Double Spectrum Case*/
 				else if(NumberOfTriggeredAnodes == 2 && (NumberOfTriggeredCathodes > 0 && NumberOfTriggeredCathodes < 4))
 				{
@@ -401,19 +405,28 @@ void RunOperationMode(Operation_Mode mode)
 					}
 				}
 
-				/*
-				 *
-				 * Anode Only Spectrum
-				 * Anode only count report will be excluded
-				 *
-				 */
+				/*Anode Only Case*/ /*The condition may be wrong!! Check with Emrah Hoca*/
+				else if(NumberOfTriggeredCathodes == 0)
+				{
+					for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
+					{
+						if(HitBuffer[n_counter + 108*m] == 1)
+						{
+							ADCVoltage = (HitBuffer[108*m + 36 + (NumberOfTriggeredChannels-1)*2] + 256*HitBuffer[108*m + 36 + (NumberOfTriggeredChannels-1)*2 + 1]);
+							EnergyLevel = ConvertToEnergyAnode(ADCVoltage, 35 - n_counter);
+							AnodeOnlySpectrumData[34 - n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
+						}
+					}
+				}
 
 				/*Multiple Events Report*/
 				else if(NumberOfTriggeredAnodes > 2)
 					MultipleAnodesEventNumber++;
+
 				/*Cathodes only Report*/
 				else if(NumberOfTriggeredAnodes == 0)
 					CathodeOnlyEventNumber++;
+
 				else
 					MultipleCathodesEventNumber++;
 			}
@@ -422,7 +435,9 @@ void RunOperationMode(Operation_Mode mode)
 		SpectrumSingleNumber++;
 		while(!AddSpectrumDoubleData(DoubleSpectrumData, SpectrumDoubleNumber));
 		SpectrumDoubleNumber++;
-		while(!AddLightCurveData(LightCurve, LightCurveDataNumber));
+		while(!AddAnodeOnlySpectrumData(AnodeOnlySpectrumData, AnodeOnlySpectrumNumber));
+		AnodeOnlySpectrumNumber++;
+		while(!AddLightCurveData(LightCurve, LightCurveDataNumber)); // Maybe it is better to write it in data acquisition mode...
 		LightCurveDataNumber++;
 
 		if(MultipleAnodesEventNumber != 0)
