@@ -56,6 +56,10 @@ double SpectrumInterval = (MAX_ENERGY_LEVEL - MIN_ENERGY_LEVEL) / NUMBER_OF_ENER
 
 unsigned int SingleSpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
 unsigned int DoubleSpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
+unsigned int AnodeOnlySpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
+unsigned int LightCurve[600] = {0};
+unsigned int second = 0;
+unsigned int TriggerNumber = 0;
 /*
  * System Info Variables
  */
@@ -261,6 +265,9 @@ void RunOperationMode(Operation_Mode mode)
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	case DataAcquisition:
+		second = 0;
+		TriggerNumber = 0;
+		enableSec(&RTCSecondInterrupt);
 		for(int i = 0; i < 100; i++)
 		{
 			CLS.set(1);
@@ -270,6 +277,7 @@ void RunOperationMode(Operation_Mode mode)
 			CLS.set(0);
 			while(!ACQCompleted && CurrentOperationMode == DataAcquisition)
 			{
+				UARTCommandHandler(CurrentUARTMode);
 				/*
 				 * In case TS gets stuck
 				 */
@@ -283,8 +291,12 @@ void RunOperationMode(Operation_Mode mode)
 				}
 			}
 			ACQCompleted = false;
+			if(CurrentOperationMode != DataAcquisition) return;
 			while(!AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber));
 		}
+		disableSec();
+		second = 0;
+		TriggerNumber = 0;
 		RawDataNumber++;
 		CurrentOperationMode = DataProcessing; // Set CurrentOperationMode to Idle
 		break;
@@ -386,6 +398,21 @@ void RunOperationMode(Operation_Mode mode)
 						}
 					}
 				}
+
+				/*
+				 *
+				 * Anode Only Spectrum
+				 * Anode only count report will be excluded
+				 *
+				 */
+
+				/*
+				 *
+				 * Light Curve
+				 * Hit per Second
+				 *
+				 */
+
 				/*Multiple Events Report*/
 				else if(NumberOfTriggeredAnodes > 2)
 					MultipleAnodesEventNumber++;
@@ -416,6 +443,10 @@ void RunOperationMode(Operation_Mode mode)
 		getRTCasByteArray(RTC_AsCharArray);
 		UpdateSystemInfo(RTC_AsCharArray, LastOperationMode, ExecutionNumber, WDTNumber,
 				      RawDataNumber, SpectrumSingleNumber, SpectrumDoubleNumber, ConfigNumber);
+		for(int counter = 0; counter < 600; counter++)
+		{
+			LightCurve[counter] = 0;
+		}
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	}
@@ -647,6 +678,7 @@ void TS_Interrupt(void)
 		{
 			HitBuffer[HitNumber*108 + h] = TriggeredChannels[h];
 		}
+		TriggerNumber++;
 		HitNumber++;
 		if(HitNumber == RAW_DATA_HIT_NUMBER)
 		{
@@ -752,9 +784,8 @@ void OBC_Handler(unsigned char* Data, unsigned int Length)
 
 void RTCSecondInterrupt()
 {
-	getRTCasByteArray(RTC_AsCharArray);
-	UpdateSystemInfo(RTC_AsCharArray, LastOperationMode, ExecutionNumber, WDTNumber,
-			      RawDataNumber, SpectrumSingleNumber, SpectrumDoubleNumber, ConfigNumber);
+	LightCurve[second++] = TriggerNumber;
+	TriggerNumber = 0;
 }
 
 
