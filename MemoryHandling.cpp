@@ -207,6 +207,33 @@ unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsig
 	return 1;
 }
 
+unsigned char ReadProcessedData(unsigned char* ProcessedData, unsigned int DataLength, unsigned long Offset, unsigned long FileNumber)
+{
+	unsigned char index = 0;
+	unsigned int bytesread = 0;
+
+	char FileName[14];
+	char Number[8];
+	FileName[index++] = '/';
+	UlToStr(Number, FileNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = '\0';
+
+	if(f_open(&file, FileName, FA_READ) != FR_OK) return 0;
+	if(f_lseek(&file, Offset) != FR_OK) return 0;
+
+	if(f_read(&file, ProcessedData, DataLength, &bytesread) != FR_OK) return 0;
+
+	if(f_close(&file) != FR_OK) return 0;
+	return 1;
+}
 unsigned char ReadSpectrumData(unsigned char* RawData, unsigned int DataLength, unsigned long Offset, unsigned long FileNumber)
 {
 	unsigned char index = 0;
@@ -251,9 +278,9 @@ unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERG
 		FileName[index++] = Number[i];
 	}
 	FileName[index++] = '.';
-	FileName[index++] = 's';
-	FileName[index++] = 'p';
-	FileName[index++] = 's';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
 	FileName[index++] = '\0';
 
 	for(int i = 0; i < 15; i++)
@@ -295,9 +322,9 @@ unsigned char AddSpectrumDoubleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERG
 		FileName[index++] = Number[i];
 	}
 	FileName[index++] = '.';
-	FileName[index++] = 's';
-	FileName[index++] = 'p';
 	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
 	FileName[index++] = '\0';
 
 	for(int i = 0; i < 15; i++)
@@ -339,9 +366,9 @@ unsigned char AddAnodeOnlySpectrumData(unsigned int (*SpectrumData)[NUMBER_OF_EN
 		FileName[index++] = Number[i];
 	}
 	FileName[index++] = '.';
-	FileName[index++] = 's';
-	FileName[index++] = 'p';
+	FileName[index++] = 'd';
 	FileName[index++] = 'a';
+	FileName[index++] = 't';
 	FileName[index++] = '\0';
 
 	for(int i = 0; i < 15; i++)
@@ -489,8 +516,8 @@ unsigned char AddLightCurveData(unsigned int* LightCurveData, unsigned long File
 		FileName[index++] = Number[i];
 	}
 	FileName[index++] = '.';
-	FileName[index++] = 'l';
-	FileName[index++] = 'i';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
 	FileName[index++] = 't';
 	FileName[index++] = '\0';
 	/**/

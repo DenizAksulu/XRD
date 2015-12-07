@@ -34,6 +34,11 @@
 #define RAW_DATA_HIT_NUMBER 5
 #define SPECTRUM_DATA_HIT_NUMBER 60000
 
+#define ACQ_TIMEOUT 2000
+
+#define XRD_OK 0xAA
+#define XRD_ERROR 0xFF
+
 /*
  * Function Prototypes
  */

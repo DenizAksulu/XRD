@@ -32,6 +32,7 @@ pulsar SOUT((unsigned char*)&P9OUT, 32);
 pulsar OVRFLOW((unsigned char*)&P9OUT, 8);
 
 struct channelconfig ChannelConfigs[36];
+struct channelconfig NullConfigs[36];
 
 UART_Mode CurrentUARTMode = NoOp;
 unsigned int MeasurementPeriod = 0;
@@ -62,6 +63,7 @@ unsigned int AnodeOnlySpectrumData[15][NUMBER_OF_ENERGY_INTERVALS] = {0};
 unsigned int LightCurve[600] = {0};
 unsigned int second = 0;
 unsigned int TriggerNumber = 0;
+int TimeoutCounter = 0;
 /*
  * System Info Variables
  */
@@ -76,11 +78,17 @@ unsigned long SpectrumSingleNumber = 0;
 unsigned long SpectrumDoubleNumber = 0;
 unsigned long AnodeOnlySpectrumNumber = 0; // NOT IMPLEMENTED!
 unsigned long LightCurveDataNumber = 0; //
+unsigned long AcquisitionNumber = 0;
 unsigned long ConfigNumber = 0;
+unsigned char XRDStatus = XRD_OK;
 /*
  *
  *
  */
+/*DUMMY Variable*/
+bool SDEnabled = 1;
+/****************/
+
 int main(void)
 {
 	/*
@@ -88,7 +96,7 @@ int main(void)
 	 */
 	fat_init();
 	if(!GetSystemInfo(RTC_AsCharArray, LastOperationMode, ExecutionNumber, WDTNumber,
-			      RawDataNumber, SpectrumSingleNumber, SpectrumDoubleNumber, ConfigNumber))
+			      RawDataNumber, AcquisitionNumber, SpectrumDoubleNumber, ConfigNumber))
 		initRTC(0, 0, 0, 0, 0, 0, 0);
 	/*
 	 *
@@ -125,6 +133,28 @@ int main(void)
 	/*
 	 * Configure RENA
 	 */
+	/*NULL CONFIG*/
+	for(int i = 0; i < 36; i++)
+	{
+		NullConfigs[i].DS = 50;        // Slow DAC Value
+		NullConfigs[i].DF = 0;         // Fast DAC Value
+		NullConfigs[i].ECAL = 0;       // Disable Channel Calibration
+		NullConfigs[i].ENF = 0;        // Disable Fast Trigger
+		NullConfigs[i].ENS = 0;        // Disable Slow Trigger
+		NullConfigs[i].FB_TC = 0;      // Feedback Time Constant is 200 mOhm
+		NullConfigs[i].FETSEL = 0;     // Set to Resistive multiplier circuit
+		NullConfigs[i].FM = 0;         // Disable Follower Mode
+		NullConfigs[i].FPDWN = 1;      // Power down Fast Circuits
+		NullConfigs[i].PDWN = 1;       // Power up Slow Circuits
+		NullConfigs[i].POL = 1;        // Polerity is positive
+		NullConfigs[i].PZSEL = 0;      // Disable Pole-Zero cancellation circuit
+		NullConfigs[i].RANGE = 0;      // Feedback capacitor size is 15 fF
+		NullConfigs[i].RSEL = 0;       // Reference Selection is VREFLOW
+		NullConfigs[i].SEL = 12;       // Time Constant selection is 1.9 uS
+		NullConfigs[i].SIZEA = 0;      // Input FET size is 450 um
+		NullConfigs[i].address = i;    // Channel Address
+		NullConfigs[i].gainselect = 3; // Gain is 5.0
+	}
 	/*(ConfigNumber == 0)
 	{
 		for(int i = 0; i < 36; i++)
@@ -197,7 +227,7 @@ int main(void)
 	/*
 	 *
 	 */
-	//CurrentOperationMode = DataAcquisition;
+	CurrentOperationMode = Idle;
 	while(1)
 	{
 		UARTCommandHandler(CurrentUARTMode);
@@ -207,70 +237,32 @@ int main(void)
 
 void RunOperationMode(Operation_Mode mode)
 {
-	unsigned char ADC_CheckConter = ADC_CHECK_LIMIT; // look at parameters.h
-	unsigned char RENA_CheckCounter = RENA_CHECK_LIMIT; // look at parameters.h
 	switch(mode)
 	{
 	case Idle:
-		ENABLE_HV_POWER.set(0); // Disable HV
+		ENABLE_HV_POWER.set(1); // Disable HV
 		//__bis_SR_register(LPM4_bits); // Sleep
 		break;
 	case Diagnostic:
-		ENABLE_5V.set(1); // Enable 5V
-		/*
-		 *	ADC silinecek.
-		 *
-		 */
-		while(ADC_CheckConter--) // decrease the counter
+		if(RENA.CheckConfig())
 		{
-			ENABLE_ADC.set(1); // Enable ADC
-			/* Check ADC */ /* Function is empty... */
-			if(1)
-			{
-				ReportEvent(ADC_OK); // Report ADC_OK
-
-				while(RENA_CheckCounter--) // decrease the counter
-				{
-					ENABLE_5V.set(1); // Enable 5V
-					/* Check RENA Config */
-					if(RENA.CheckConfig())
-					{
-						RENA.ConfigureRena(ChannelConfigs, 36, CIN, CSHIFT, CS); // Configure RENA
-						ReportEvent(RENA_OK); // Report RENA OK
-						CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
-						break; // Get out of switch
-					}
-					else
-					{
-						ReportEvent(RENA_FAIL); // Report RENA Fail
-						ENABLE_5V.set(0); // Disable 5V
-						delay(5000); // Delay duration unknown
-					}
-					/*************************************************/
-				}
-				if(RENA_CheckCounter <= 0)
-				{
-					ReportEvent(RENA_FATAL);
-					break;
-				}
-			}
-			else
-			{
-				ReportEvent(ADC_FAIL); // Report ADC Fail
-				ENABLE_ADC.set(0); // Disable ADC
-				delay(100); // Delay duration unknown
-			}
-			/*****************************************/
+			XRDStatus = XRD_OK;
+			RENA.ConfigureRena(NullConfigs, 36, CIN, CSHIFT, CS); // Configure RENA
+			ReportEvent(RENA_OK); // Report RENA OK
 		}
-		if(ADC_CheckConter <= 0)
+		else
 		{
-			ReportEvent(ADC_FATAL); // Report ADC Fail
+			XRDStatus = XRD_ERROR;
+			RENA.ConfigureRena(NullConfigs, 36, CIN, CSHIFT, CS); // Configure RENA
+			ReportEvent(RENA_FAIL); // Report RENA Fail
 		}
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	case DataAcquisition:
+		ENABLE_HV_POWER.set(0); // Enable HV
 		second = 0;
 		TriggerNumber = 0;
+		TimeoutCounter = 0;
 		enableSec(&RTCSecondInterrupt);
 		for(int i = 0; i < 100; i++)
 		{
@@ -296,11 +288,13 @@ void RunOperationMode(Operation_Mode mode)
 			}
 			ACQCompleted = false;
 			if(CurrentOperationMode != DataAcquisition) return;
-			while(!AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber));
+			if(SDEnabled)
+				while(!AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber));
 		}
 		disableSec();
 		second = 0;
 		TriggerNumber = 0;
+		TimeoutCounter = 0;
 		RawDataNumber++;
 		CurrentOperationMode = DataProcessing; // Set CurrentOperationMode to Idle
 		break;
@@ -310,7 +304,7 @@ void RunOperationMode(Operation_Mode mode)
 		unsigned long CathodeOnlyEventNumber = 0;
 		for(int i = 0; i < 100; i++)
 		{
-			while(!ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, SpectrumSingleNumber));
+			while(!ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, AcquisitionNumber));
 			for(int m = 0; m < RAW_DATA_HIT_NUMBER; m++)
 			{
 				int NumberOfTriggeredChannels = 0;
@@ -431,14 +425,11 @@ void RunOperationMode(Operation_Mode mode)
 					MultipleCathodesEventNumber++;
 			}
 		}
-		while(!AddSpectrumSingleData(SingleSpectrumData, SpectrumSingleNumber));
-		SpectrumSingleNumber++;
-		while(!AddSpectrumDoubleData(DoubleSpectrumData, SpectrumDoubleNumber));
-		SpectrumDoubleNumber++;
-		while(!AddAnodeOnlySpectrumData(AnodeOnlySpectrumData, AnodeOnlySpectrumNumber));
-		AnodeOnlySpectrumNumber++;
-		while(!AddLightCurveData(LightCurve, LightCurveDataNumber)); // Maybe it is better to write it in data acquisition mode...
-		LightCurveDataNumber++;
+		while(!AddSpectrumSingleData(SingleSpectrumData, AcquisitionNumber));
+		while(!AddSpectrumDoubleData(DoubleSpectrumData, AcquisitionNumber));
+		while(!AddAnodeOnlySpectrumData(AnodeOnlySpectrumData, AcquisitionNumber));
+		while(!AddLightCurveData(LightCurve, AcquisitionNumber)); // Maybe it is better to write it in data acquisition mode...
+		AcquisitionNumber++;
 
 		if(MultipleAnodesEventNumber != 0)
 			while(!ReportEvent(MultipleAnodes, MultipleAnodesEventNumber));
@@ -449,7 +440,7 @@ void RunOperationMode(Operation_Mode mode)
 
 		getRTCasByteArray(RTC_AsCharArray);
 		UpdateSystemInfo(RTC_AsCharArray, LastOperationMode, ExecutionNumber, WDTNumber,
-				      RawDataNumber, SpectrumSingleNumber, SpectrumDoubleNumber, ConfigNumber);
+				      RawDataNumber, AcquisitionNumber, SpectrumDoubleNumber, ConfigNumber);
 		for(int counter = 0; counter < 600; counter++)
 		{
 			LightCurve[counter] = 0;
@@ -604,6 +595,34 @@ void UARTCommandHandler(UART_Mode mode)
 			}
 		}
 		/*************************************************************/
+		/*High Voltage On*/
+		else if(CompareCharArrayToString(ReceivedData, "HighOn", 6))
+		{
+			ENABLE_HV_POWER.set(0);
+			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+		}
+		/*************************************************************/
+		/*High Voltage Off*/
+		else if(CompareCharArrayToString(ReceivedData, "HighOff", 7))
+		{
+			ENABLE_HV_POWER.set(1);
+			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+		}
+		/*************************************************************/
+		/*SD On*/
+		else if(CompareCharArrayToString(ReceivedData, "SDOn", 4))
+		{
+			SDEnabled = true;
+			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+		}
+		/*************************************************************/
+		/*SD Off*/
+		else if(CompareCharArrayToString(ReceivedData, "SDOff", 5))
+		{
+			SDEnabled = false;
+			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+		}
+		/*************************************************************/
 		CurrentUARTMode = NoOp;
 		break;
 	case HeaderError:
@@ -714,6 +733,7 @@ unsigned char SpectrumDataLengthNumberChar[4];
 unsigned long CommandFileNumber = 0;
 unsigned long CommandOffsetNumber = 0;
 unsigned long CommandLengthNumber = 0;
+unsigned char ERROR = 0x0F;
 void OBC_Handler(unsigned char* Data, unsigned int Length)
 {
 	switch(Data[0])
@@ -738,61 +758,47 @@ void OBC_Handler(unsigned char* Data, unsigned int Length)
 		break;
 	case 0x03: // Get Mode command
 		ReceivedData[0] = CurrentOperationMode + 1;
+		ReceivedData[1] = XRDStatus;
 		OBC.Send(ReceivedData);
 		break;
-	case 0x04: // Get Raw Data number command
-		*(unsigned long*)RawDataFileNumberChar = RawDataNumber;
-		OBC.Send(RawDataFileNumberChar);
-		break;
-	case 0x05: // Get Spectrum Data number command
-		*(unsigned long*)SpectrumDataFileNumberChar = SpectrumSingleNumber;
-		OBC.Send(SpectrumDataFileNumberChar);
-		break;
-	case 0x06: // Get Length of Raw Data file command
-		CommandFileNumber = Data[1] + (Data[2] << 8) +
-				((unsigned long)Data[3] << 16) + ((unsigned long)Data[4] << 24);
-		*(unsigned long*)RawDataLengthNumberChar = GetRawDataFileLength(CommandFileNumber);
-		OBC.Send(RawDataLengthNumberChar);
-		break;
-	case 0x07: // Get Length of Spectrum Data file command
-		CommandFileNumber = Data[1] + (Data[2] << 8) +
-				((unsigned long)Data[3] << 16) + ((unsigned long)Data[4] << 24);
-		*(unsigned long*)SpectrumDataLengthNumberChar = GetSpectrumDataFileLength(CommandFileNumber);
-		OBC.Send(SpectrumDataLengthNumberChar);
-		break;
-	case 0x08: // Get Raw Data command
+	case 0x04: // Get Raw Data command
 		// First 4 bytes = raw data number
-		CommandFileNumber = Data[1] + (Data[2] << 8) +
+		CommandOffsetNumber = Data[1] + (Data[2] << 8) +
 				((unsigned long)Data[3] << 16) + (unsigned long)((unsigned long)Data[4] << 24);
 		// Next 4 bytes = offset
-		CommandOffsetNumber = Data[5] + (Data[6] << 8) +
+		CommandLengthNumber = Data[5] + (Data[6] << 8) +
 				((unsigned long)Data[7] << 16) + ((unsigned long)Data[8] << 24);
 		// Next 4 bytes = length (MAX: 256)
-		CommandLengthNumber = Data[9] + (Data[10] << 8) +
-				((unsigned long)Data[11] << 16) + ((unsigned long)Data[12] << 24);
-		while(!ReadRawData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, CommandFileNumber));
+		while(!ReadRawData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, RawDataNumber));
 		OBC.Send(ReceivedData);
 		break;
-	case 0x09: // Get Spectrum Data command
+	case 0x05: // Get Spectrum Data command
 		// First 4 bytes = raw data number
-		CommandFileNumber = Data[1] + (Data[2] << 8) +
+		CommandOffsetNumber = Data[1] + (Data[2] << 8) +
 				((unsigned long)Data[3] << 16) + (unsigned long)((unsigned long)Data[4] << 24);
 		// Next 4 bytes = offset
-		CommandOffsetNumber = Data[5] + (Data[6] << 8) +
+		CommandLengthNumber = Data[5] + (Data[6] << 8) +
 				((unsigned long)Data[7] << 16) + ((unsigned long)Data[8] << 24);
-		// Next 4 bytes = length (MAX: 256)
-		CommandLengthNumber = Data[9] + (Data[10] << 8) +
-				((unsigned long)Data[11] << 16) + ((unsigned long)Data[12] << 24);
-		while(!ReadSpectrumData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, CommandFileNumber));
+		while(!ReadProcessedData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, AcquisitionNumber));
 		OBC.Send(ReceivedData);
+		break;
+	default:
+		OBC.Send(&ERROR);
 		break;
 	}
 }
 
+//Timeout at 2000 but Light curve ends at 600
 void RTCSecondInterrupt()
 {
 	LightCurve[second++] = TriggerNumber;
 	TriggerNumber = 0;
+	TimeoutCounter++;
+	if(TimeoutCounter >= ACQ_TIMEOUT)
+	{
+		CurrentOperationMode = Idle;
+		TimeoutCounter = 0;
+	}
 }
 
 
