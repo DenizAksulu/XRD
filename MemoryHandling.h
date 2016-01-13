@@ -43,6 +43,7 @@ unsigned long GetRawDataFileLength(unsigned long RawDataNumber);
 unsigned long GetSpectrumDataFileLength(unsigned long SpectrumSingleNumber);
 unsigned char ReportEvent(StatusReports report);
 unsigned char ReportEvent(StatusReports report, unsigned long EventNumber);
+unsigned char ReportEvent(StatusReports report, unsigned long EventNumber, unsigned long FileNumber);
 /*
  *
  */

@@ -23,7 +23,7 @@ void fat_init(void)
     // INFINITE LOOP!!!!! NEEDS TIMEOUT!!!!!
     while (errCode != FR_OK){                               //go until f_open returns FR_OK (function successful)
         errCode = f_mount(0, &fatfs);                       //mount drive number 0
-        errCode = f_opendir(&dir, "/");				    	//root directory
+        errCode = f_opendir(&dir, "/data");				    //data directory
     }
 }
 
@@ -153,8 +153,13 @@ unsigned char AddRawData(unsigned char* RawData, unsigned int DataLength, unsign
 	/*Adjusting File Name*/
 	unsigned int byteswritten = 0;
 	unsigned char index = 0;
-	char FileName[14];
+	char FileName[19];
 	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
 	FileName[index++] = '/';
 	UlToStr(Number, FileNumber, 8);
 	for(int i = 0; i < 8; i++)
@@ -184,8 +189,13 @@ unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsig
 	unsigned char index = 0;
 	unsigned int bytesread = 0;
 
-	char FileName[14];
+	char FileName[19];
 	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
 	FileName[index++] = '/';
 	UlToStr(Number, FileNumber, 8);
 	for(int i = 0; i < 8; i++)
@@ -212,8 +222,13 @@ unsigned char ReadProcessedData(unsigned char* ProcessedData, unsigned int DataL
 	unsigned char index = 0;
 	unsigned int bytesread = 0;
 
-	char FileName[14];
+	char FileName[19];
 	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
 	FileName[index++] = '/';
 	UlToStr(Number, FileNumber, 8);
 	for(int i = 0; i < 8; i++)
@@ -239,8 +254,13 @@ unsigned char ReadSpectrumData(unsigned char* RawData, unsigned int DataLength, 
 	unsigned char index = 0;
 	unsigned int bytesread = 0;
 
-	char FileName[14];
+	char FileName[19];
 	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
 	FileName[index++] = '/';
 	UlToStr(Number, FileNumber, 8);
 	for(int i = 0; i < 8; i++)
@@ -269,8 +289,14 @@ unsigned char AddSpectrumSingleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERG
 	unsigned char SpectrumCHAR[2];
 	unsigned int byteswritten = 0;
 	unsigned char index = 0;
-	char FileName[11];
+
+	char FileName[19];
 	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
 	FileName[index++] = '/';
 	UlToStr(Number, FileNumber, 8);
 	for(int i = 0; i < 8; i++)
@@ -313,8 +339,14 @@ unsigned char AddSpectrumDoubleData(unsigned int (*SpectrumData)[NUMBER_OF_ENERG
 	unsigned char SpectrumCHAR[2];
 	unsigned int byteswritten = 0;
 	unsigned char index = 0;
-	char FileName[11];
+
+	char FileName[19];
 	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
 	FileName[index++] = '/';
 	UlToStr(Number, FileNumber, 8);
 	for(int i = 0; i < 8; i++)
@@ -357,8 +389,14 @@ unsigned char AddAnodeOnlySpectrumData(unsigned int (*SpectrumData)[NUMBER_OF_EN
 	unsigned char SpectrumCHAR[2];
 	unsigned int byteswritten = 0;
 	unsigned char index = 0;
-	char FileName[11];
+
+	char FileName[19];
 	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
 	FileName[index++] = '/';
 	UlToStr(Number, FileNumber, 8);
 	for(int i = 0; i < 8; i++)
@@ -453,6 +491,60 @@ unsigned char ReportEvent(StatusReports report, unsigned long EventNumber)
 	if(f_close(&file) != FR_OK) return 0;
 	return 1;
 }
+unsigned char ReportEvent(StatusReports report, unsigned long EventNumber, unsigned long FileNumber)
+{
+	unsigned char index = 0;
+	unsigned char RTC_AsCharArray[14];
+	unsigned char CharEventNumber[4];
+	unsigned char Report[19] = {};
+	*(unsigned long*)CharEventNumber = EventNumber;
+
+	char FileName[19];
+	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
+	FileName[index++] = '/';
+	UlToStr(Number, FileNumber, 8);
+	for(int i = 0; i < 8; i++)
+	{
+		FileName[index++] = Number[i];
+	}
+	FileName[index++] = '.';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = '\0';
+
+	index = 0;
+	getRTCasByteArray(RTC_AsCharArray);
+	for(int i = 0; i < 14; i++)
+	{
+		Report[index++] = RTC_AsCharArray[i];
+	}
+
+	Report[index++] = report;
+	Report[index++] = CharEventNumber[0];
+	Report[index++] = CharEventNumber[1];
+	Report[index++] = CharEventNumber[2];
+	Report[index++] = CharEventNumber[3];
+	/*Adjusting File Name*/
+	unsigned int byteswritten = 0;
+	/**/
+
+	/*Open File*/
+	if(f_open(&file, FileName, FA_OPEN_ALWAYS | FA_WRITE) != FR_OK) return 0;
+	/**/
+	/*Write into File*/
+	DWORD FileLength = f_size(&file);
+	if(f_lseek(&file, FileLength) != FR_OK) return 0;
+	if(f_write(&file, Report, 19, &byteswritten) != FR_OK) return 0;
+	/**/
+	if(f_close(&file) != FR_OK) return 0;
+	return 1;
+}
 
 unsigned long GetRawDataFileLength(unsigned long RawDataNumber)
 {
@@ -507,8 +599,14 @@ unsigned char AddLightCurveData(unsigned int* LightCurveData, unsigned long File
 	/*Adjusting File Name*/
 	unsigned int byteswritten = 0;
 	unsigned char index = 0;
-	char FileName[14];
+
+	char FileName[19];
 	char Number[8];
+	FileName[index++] = '/';
+	FileName[index++] = 'd';
+	FileName[index++] = 'a';
+	FileName[index++] = 't';
+	FileName[index++] = 'a';
 	FileName[index++] = '/';
 	UlToStr(Number, FileNumber, 8);
 	for(int i = 0; i < 8; i++)
@@ -520,6 +618,7 @@ unsigned char AddLightCurveData(unsigned int* LightCurveData, unsigned long File
 	FileName[index++] = 'a';
 	FileName[index++] = 't';
 	FileName[index++] = '\0';
+
 	/**/
 	/*Open File*/
 	if(f_open(&file, FileName, FA_OPEN_ALWAYS | FA_WRITE) != FR_OK) return 0;

@@ -230,6 +230,7 @@ int main(void)
 	CurrentOperationMode = Idle;
 	while(1)
 	{
+		WDTCTL = WDT_ADLY_1000;
 		UARTCommandHandler(CurrentUARTMode);
 		RunOperationMode(CurrentOperationMode);
 	}
@@ -240,15 +241,24 @@ void RunOperationMode(Operation_Mode mode)
 	switch(mode)
 	{
 	case Idle:
-		ENABLE_HV_POWER.set(1); // Disable HV
+		//ENABLE_HV_POWER.set(1); // Disable HV
 		//__bis_SR_register(LPM4_bits); // Sleep
 		break;
 	case Diagnostic:
 		if(RENA.CheckConfig())
 		{
-			XRDStatus = XRD_OK;
-			RENA.ConfigureRena(NullConfigs, 36, CIN, CSHIFT, CS); // Configure RENA
-			ReportEvent(RENA_OK); // Report RENA OK
+			if(TS1.get())
+			{
+				XRDStatus = XRD_OK;
+				RENA.ConfigureRena(NullConfigs, 36, CIN, CSHIFT, CS); // Configure RENA
+				ReportEvent(RENA_OK); // Report RENA OK
+			}
+			else
+			{
+				XRDStatus = XRD_ERROR;
+				RENA.ConfigureRena(NullConfigs, 36, CIN, CSHIFT, CS); // Configure RENA
+				ReportEvent(RENA_FAIL); // Report RENA Fail
+			}
 		}
 		else
 		{
@@ -259,13 +269,14 @@ void RunOperationMode(Operation_Mode mode)
 		CurrentOperationMode = Idle; // Set CurrentOperationMode to Idle
 		break;
 	case DataAcquisition:
-		ENABLE_HV_POWER.set(0); // Enable HV
+		//ENABLE_HV_POWER.set(0); // Enable HV
 		second = 0;
 		TriggerNumber = 0;
 		TimeoutCounter = 0;
 		enableSec(&RTCSecondInterrupt);
 		for(int i = 0; i < 100; i++)
 		{
+			WDTCTL = WDT_ADLY_1000;
 			CLS.set(1);
 			__delay_cycles(500);
 			ACQ.set(1);
@@ -273,6 +284,7 @@ void RunOperationMode(Operation_Mode mode)
 			CLS.set(0);
 			while(!ACQCompleted && CurrentOperationMode == DataAcquisition)
 			{
+				WDTCTL = WDT_ADLY_1000;
 				UARTCommandHandler(CurrentUARTMode);
 				/*
 				 * In case TS gets stuck
@@ -289,14 +301,18 @@ void RunOperationMode(Operation_Mode mode)
 			ACQCompleted = false;
 			if(CurrentOperationMode != DataAcquisition) return;
 			if(SDEnabled)
+			{
 				while(!AddRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, RawDataNumber));
+			}
 		}
 		disableSec();
 		second = 0;
 		TriggerNumber = 0;
 		TimeoutCounter = 0;
-		RawDataNumber++;
-		CurrentOperationMode = DataProcessing; // Set CurrentOperationMode to Idle
+		//ENABLE_HV_POWER.set(1); // Disable Power
+		if(SDEnabled)
+			CurrentOperationMode = DataProcessing;
+		else CurrentOperationMode = Idle;
 		break;
 	case DataProcessing:
 		unsigned long MultipleAnodesEventNumber = 0;
@@ -304,9 +320,11 @@ void RunOperationMode(Operation_Mode mode)
 		unsigned long CathodeOnlyEventNumber = 0;
 		for(int i = 0; i < 100; i++)
 		{
-			while(!ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, AcquisitionNumber));
+			WDTCTL = WDT_ADLY_1000;
+			while(!ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, RawDataNumber));
 			for(int m = 0; m < RAW_DATA_HIT_NUMBER; m++)
 			{
+				WDTCTL = WDT_ADLY_1000;
 				int NumberOfTriggeredChannels = 0;
 				int NumberOfTriggeredAnodes = 0;
 				int NumberOfTriggeredCathodes = 0;
@@ -316,18 +334,18 @@ void RunOperationMode(Operation_Mode mode)
 				double EnergyLevel = 0;
 				unsigned char n_counter = 0;
 
-				for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
-				{
-					if(HitBuffer[n_counter + 108*m] == 1)
-					{
-						NumberOfTriggeredAnodes++;
-					}
-				}
-				for(n_counter = 1; n_counter < 15; n_counter++) // Check Cathodes
+				for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes // Check Anodes
 				{
 					if(HitBuffer[n_counter + 108*m] == 1)
 					{
 						NumberOfTriggeredCathodes++;
+					}
+				}
+				for(n_counter = 1; n_counter < 15; n_counter++) // Check Cathodes // Check Anodes
+				{
+					if(HitBuffer[n_counter + 108*m] == 1)
+					{
+						NumberOfTriggeredAnodes++;
 					}
 				}
 				for(n_counter = 1; n_counter < 35; n_counter++) // Check All channels
@@ -341,13 +359,13 @@ void RunOperationMode(Operation_Mode mode)
 				/*Single Spectrum Case*/
 				if(NumberOfTriggeredAnodes == 1 && (NumberOfTriggeredCathodes > 0 && NumberOfTriggeredCathodes < 4))
 				{
-					for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
+					for(n_counter = 1; n_counter < 15; n_counter++) // Check Anodes
 					{
 						if(HitBuffer[n_counter + 108*m] == 1)
 						{
-							ADCVoltage = (HitBuffer[108*m + 36 + (NumberOfTriggeredChannels-1)*2] + 256*HitBuffer[108*m + 36 + (NumberOfTriggeredChannels-1)*2 + 1]);
-							EnergyLevel = ConvertToEnergyAnode(ADCVoltage, 35 - n_counter);
-							SingleSpectrumData[34 - n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
+							ADCVoltage = (HitBuffer[108*m + 36] + 256*HitBuffer[108*m + 36 + 1]);
+							EnergyLevel = ConvertToEnergyAnode(ADCVoltage, n_counter);
+							SingleSpectrumData[n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
 						}
 					}
 				}
@@ -356,42 +374,42 @@ void RunOperationMode(Operation_Mode mode)
 				else if(NumberOfTriggeredAnodes == 2 && (NumberOfTriggeredCathodes > 0 && NumberOfTriggeredCathodes < 4))
 				{
 					unsigned char index = 0;
-					for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
+					for(n_counter = 1; n_counter < 15; n_counter++) // Check Anodes
 					{
 						if(HitBuffer[n_counter + 108*m] == 1)
 						{
+							DoubleADCVoltage[index] = (HitBuffer[108*m + 36 + index*2] + 256*HitBuffer[108*m + 36 + index*2 + 1]);
 							index++;
-							DoubleADCVoltage[index - 1] = (HitBuffer[108*m + 36 + (NumberOfTriggeredChannels - index)*2] + 256*HitBuffer[108*m + 36 + (NumberOfTriggeredChannels - index)*2 + 1]);
 						}
 					}
 					index = 0;
 					if(DoubleADCVoltage[0] >= DoubleADCVoltage[1])
 					{
-						for(n_counter = 34; n_counter > 18; n_counter--) // Check Anodes
+						for(n_counter = 14; n_counter > 0; n_counter--) // Check Anodes
 						{
 							if(HitBuffer[n_counter + 108*m] == 1)
 							{
-								DoubleEnergyLevel[0] = ConvertToEnergyAnode(DoubleADCVoltage[0], (35 - n_counter));
-								DoubleEnergyLevel[1] = ConvertToEnergyAnode(DoubleADCVoltage[1], (35 - n_counter));
+								DoubleEnergyLevel[0] = ConvertToEnergyAnode(DoubleADCVoltage[0], (n_counter));
+								DoubleEnergyLevel[1] = ConvertToEnergyAnode(DoubleADCVoltage[1], (n_counter));
 								EnergyLevel = DoubleEnergyLevel[0] + DoubleEnergyLevel[1];
-								DoubleSpectrumData[34 - n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
+								DoubleSpectrumData[n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
 								break;
 							}
 						}
 					}
 					else
 					{
-						for(n_counter = 34; n_counter > 18; n_counter--) // Check Anodes
+						for(n_counter = 14; n_counter > 0; n_counter--) // Check Anodes
 						{
 							if(HitBuffer[n_counter + 108*m] == 1)
 							{
 								index++;
 								if(index == 2)
 								{
-									DoubleEnergyLevel[0] = ConvertToEnergyAnode(DoubleADCVoltage[0], 35 - n_counter);
-									DoubleEnergyLevel[1] = ConvertToEnergyAnode(DoubleADCVoltage[1], 35 - n_counter);
+									DoubleEnergyLevel[0] = ConvertToEnergyAnode(DoubleADCVoltage[0], n_counter);
+									DoubleEnergyLevel[1] = ConvertToEnergyAnode(DoubleADCVoltage[1], n_counter);
 									EnergyLevel = DoubleEnergyLevel[0] + DoubleEnergyLevel[1];
-									DoubleSpectrumData[34 - n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
+									DoubleSpectrumData[n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
 									break;
 								}
 							}
@@ -399,16 +417,16 @@ void RunOperationMode(Operation_Mode mode)
 					}
 				}
 
-				/*Anode Only Case*/ /*The condition may be wrong!! Check with Emrah Hoca*/
+				/*Anode Only Case*/
 				else if(NumberOfTriggeredCathodes == 0)
 				{
-					for(n_counter = 19; n_counter < 35; n_counter++) // Check Anodes
+					for(n_counter = 1; n_counter < 15; n_counter++) // Check Anodes
 					{
 						if(HitBuffer[n_counter + 108*m] == 1)
 						{
-							ADCVoltage = (HitBuffer[108*m + 36 + (NumberOfTriggeredChannels-1)*2] + 256*HitBuffer[108*m + 36 + (NumberOfTriggeredChannels-1)*2 + 1]);
-							EnergyLevel = ConvertToEnergyAnode(ADCVoltage, 35 - n_counter);
-							AnodeOnlySpectrumData[34 - n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
+							ADCVoltage = (HitBuffer[108*m + 36] + 256*HitBuffer[108*m + 36 + 1]);
+							EnergyLevel = ConvertToEnergyAnode(ADCVoltage, n_counter);
+							AnodeOnlySpectrumData[n_counter][(unsigned int)(EnergyLevel/SpectrumInterval)]++;
 						}
 					}
 				}
@@ -425,18 +443,14 @@ void RunOperationMode(Operation_Mode mode)
 					MultipleCathodesEventNumber++;
 			}
 		}
-		while(!AddSpectrumSingleData(SingleSpectrumData, AcquisitionNumber));
-		while(!AddSpectrumDoubleData(DoubleSpectrumData, AcquisitionNumber));
-		while(!AddAnodeOnlySpectrumData(AnodeOnlySpectrumData, AcquisitionNumber));
-		while(!AddLightCurveData(LightCurve, AcquisitionNumber)); // Maybe it is better to write it in data acquisition mode...
-		AcquisitionNumber++;
-
-		if(MultipleAnodesEventNumber != 0)
-			while(!ReportEvent(MultipleAnodes, MultipleAnodesEventNumber));
-		if(MultipleAnodesEventNumber != 0)
-			while(!ReportEvent(MultipleCathodes, MultipleCathodesEventNumber));
-		if(CathodeOnlyEventNumber != 0)
-			while(!ReportEvent(CathodeOnly, CathodeOnlyEventNumber));
+		while(!AddSpectrumSingleData(SingleSpectrumData, RawDataNumber)); // 3000 byte
+		while(!AddSpectrumDoubleData(DoubleSpectrumData, RawDataNumber)); // 3000 byte
+		while(!AddAnodeOnlySpectrumData(AnodeOnlySpectrumData, RawDataNumber)); // 3000 byte
+		while(!AddLightCurveData(LightCurve, RawDataNumber));// 1200 byte // Maybe it is better to write it in data acquisition mode...
+		while(!ReportEvent(MultipleAnodes, MultipleAnodesEventNumber, RawDataNumber)); // 19
+		while(!ReportEvent(MultipleCathodes, MultipleCathodesEventNumber, RawDataNumber)); // 19
+		while(!ReportEvent(CathodeOnly, CathodeOnlyEventNumber, RawDataNumber)); // 19
+		RawDataNumber++;
 
 		getRTCasByteArray(RTC_AsCharArray);
 		UpdateSystemInfo(RTC_AsCharArray, LastOperationMode, ExecutionNumber, WDTNumber,
@@ -480,6 +494,16 @@ void CommandVector(unsigned char Phase, unsigned char* Data, unsigned int Length
 		}
 }
 
+unsigned char RawDataFileNumberChar[4];
+unsigned char SpectrumDataFileNumberChar[4];
+unsigned char RawDataOffsetNumberChar[4];
+unsigned char SpectrumDataOffsetNumberChar[4];
+unsigned char RawDataLengthNumberChar[4];
+unsigned char SpectrumDataLengthNumberChar[4];
+unsigned long CommandFileNumber = 0;
+unsigned long CommandOffsetNumber = 0;
+unsigned long CommandLengthNumber = 0;
+unsigned char ERROR = 0x0F;
 void UARTCommandHandler(UART_Mode mode)
 {
 	switch(mode)
@@ -580,18 +604,23 @@ void UARTCommandHandler(UART_Mode mode)
 		{
 			if(ReceivedData[10] == 0)
 			{
-				CurrentOperationMode = Idle;
 				pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+				CurrentOperationMode = Idle;
 			}
 			else if(ReceivedData[10] == 1)
 			{
-				CurrentOperationMode = Diagnostic;
 				pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+				CurrentOperationMode = Diagnostic;
 			}
 			else if(ReceivedData[10] == 2)
 			{
-				CurrentOperationMode = DataAcquisition;
 				pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+				CurrentOperationMode = DataAcquisition;
+			}
+			else if(ReceivedData[10] == 3)
+			{
+				pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+				CurrentOperationMode = DataProcessing;
 			}
 		}
 		/*************************************************************/
@@ -623,6 +652,53 @@ void UARTCommandHandler(UART_Mode mode)
 			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
 		}
 		/*************************************************************/
+		/*Get Status*/
+		else if(CompareCharArrayToString(ReceivedData, "GetStatus", 9))
+		{
+			int index = 9;
+			ReceivedData[index++] = CurrentOperationMode;
+			ReceivedData[index++] = XRDStatus;
+			if(!ENABLE_HV_POWER.get())
+				ReceivedData[index++] = 0x01;
+			else
+				ReceivedData[index++] = 0x00;
+			if(SDEnabled)
+				ReceivedData[index++] = 0x01;
+			else
+				ReceivedData[index++] = 0x00;
+			pc.Send(AssembleDataPacket(ReceivedData, 13), 23);
+		}
+		/*************************************************************/
+		/*GetSDData***************************************************/
+		else if(CompareCharArrayToString(ReceivedData, "GetSDData", 9))
+		{
+			//RawData
+			if(ReceivedData[9] == 0 && RawDataNumber != 0)
+			{
+				// First 4 bytes = OFFSET
+				CommandOffsetNumber = ReceivedData[10] + (unsigned long)((unsigned long)ReceivedData[11] << 8) +
+						((unsigned long)ReceivedData[12] << 16) + (unsigned long)((unsigned long)ReceivedData[13] << 24);
+				// Next 4 bytes = length (MAX: 256)
+				CommandLengthNumber = ReceivedData[14] + (unsigned long)((unsigned long)ReceivedData[15] << 8) +
+						((unsigned long)ReceivedData[16] << 16) + ((unsigned long)ReceivedData[17] << 24);
+				while(!ReadRawData(HitBuffer, CommandLengthNumber, CommandOffsetNumber, RawDataNumber - 1));
+
+				pc.Send(HitBuffer, CommandLengthNumber);
+			}
+			//ProcessedData
+			if(ReceivedData[9] == 1 && RawDataNumber != 0)
+			{
+				// First 4 bytes = OFFSET
+				CommandOffsetNumber = ReceivedData[10] + (unsigned long)((unsigned long)ReceivedData[11] << 8) +
+						((unsigned long)ReceivedData[12] << 16) + (unsigned long)((unsigned long)ReceivedData[13] << 24);
+				// Next 4 bytes = length (MAX: 256)
+				CommandLengthNumber = ReceivedData[14] + (unsigned long)((unsigned long)ReceivedData[15] << 8) +
+						((unsigned long)ReceivedData[16] << 16) + ((unsigned long)ReceivedData[17] << 24);
+				while(!ReadProcessedData(HitBuffer, CommandLengthNumber, CommandOffsetNumber, RawDataNumber - 1));
+
+				pc.Send(HitBuffer, CommandLengthNumber);
+			}
+		}
 		CurrentUARTMode = NoOp;
 		break;
 	case HeaderError:
@@ -724,16 +800,6 @@ void TS_Interrupt(void)
 	}
 }
 
-unsigned char RawDataFileNumberChar[4];
-unsigned char SpectrumDataFileNumberChar[4];
-unsigned char RawDataOffsetNumberChar[4];
-unsigned char SpectrumDataOffsetNumberChar[4];
-unsigned char RawDataLengthNumberChar[4];
-unsigned char SpectrumDataLengthNumberChar[4];
-unsigned long CommandFileNumber = 0;
-unsigned long CommandOffsetNumber = 0;
-unsigned long CommandLengthNumber = 0;
-unsigned char ERROR = 0x0F;
 void OBC_Handler(unsigned char* Data, unsigned int Length)
 {
 	switch(Data[0])
@@ -763,24 +829,46 @@ void OBC_Handler(unsigned char* Data, unsigned int Length)
 		break;
 	case 0x04: // Get Raw Data command
 		// First 4 bytes = raw data number
-		CommandOffsetNumber = Data[1] + (Data[2] << 8) +
+		CommandOffsetNumber = Data[1] + (unsigned long)((unsigned long)Data[2] << 8) +
 				((unsigned long)Data[3] << 16) + (unsigned long)((unsigned long)Data[4] << 24);
 		// Next 4 bytes = offset
-		CommandLengthNumber = Data[5] + (Data[6] << 8) +
+		CommandLengthNumber = Data[5] + (unsigned long)((unsigned long)Data[6] << 8) +
 				((unsigned long)Data[7] << 16) + ((unsigned long)Data[8] << 24);
 		// Next 4 bytes = length (MAX: 256)
-		while(!ReadRawData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, RawDataNumber));
-		OBC.Send(ReceivedData);
+		if(RawDataNumber != 0)
+		{
+			while(!ReadRawData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, RawDataNumber - 1));
+			OBC.Send(ReceivedData);
+		}
+		else
+		{
+			for(int i = 0; i < 256; i++)
+			{
+				ReceivedData[i] = ERROR;
+			}
+			OBC.Send(ReceivedData);
+		}
 		break;
 	case 0x05: // Get Spectrum Data command
 		// First 4 bytes = raw data number
-		CommandOffsetNumber = Data[1] + (Data[2] << 8) +
+		CommandOffsetNumber = Data[1] + (unsigned long)((unsigned long)Data[2] << 8) +
 				((unsigned long)Data[3] << 16) + (unsigned long)((unsigned long)Data[4] << 24);
 		// Next 4 bytes = offset
-		CommandLengthNumber = Data[5] + (Data[6] << 8) +
+		CommandLengthNumber = Data[5] + (unsigned long)((unsigned long)Data[6] << 8) +
 				((unsigned long)Data[7] << 16) + ((unsigned long)Data[8] << 24);
-		while(!ReadProcessedData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, AcquisitionNumber));
-		OBC.Send(ReceivedData);
+		if(RawDataNumber != 0)
+		{
+			while(!ReadProcessedData(ReceivedData, CommandLengthNumber, CommandOffsetNumber, RawDataNumber - 1));
+			OBC.Send(ReceivedData);
+		}
+		else
+		{
+			for(int i = 0; i < 256; i++)
+			{
+				ReceivedData[i] = ERROR;
+			}
+			OBC.Send(ReceivedData);
+		}
 		break;
 	default:
 		OBC.Send(&ERROR);
@@ -791,8 +879,11 @@ void OBC_Handler(unsigned char* Data, unsigned int Length)
 //Timeout at 2000 but Light curve ends at 600
 void RTCSecondInterrupt()
 {
-	LightCurve[second++] = TriggerNumber;
-	TriggerNumber = 0;
+	if(second < 600)
+	{
+		LightCurve[second++] = TriggerNumber;
+		TriggerNumber = 0;
+	}
 	TimeoutCounter++;
 	if(TimeoutCounter >= ACQ_TIMEOUT)
 	{
@@ -800,8 +891,6 @@ void RTCSecondInterrupt()
 		TimeoutCounter = 0;
 	}
 }
-
-
 
 
 

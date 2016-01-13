@@ -58,8 +58,7 @@ void SetVcoreUp (unsigned int level);
 
 int _system_pre_init(void)
 {
-	WDTCTL = WDTPW + WDTHOLD;
-
+	WDTCTL = WDT_ARST_1000;//WDTHOLD;
     __bis_SR_register(GIE);
 	/*Clock Configuration*/
 	SetVcoreUp(PMMCOREV_1);
