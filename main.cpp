@@ -81,6 +81,7 @@ unsigned long LightCurveDataNumber = 0; //
 unsigned long AcquisitionNumber = 0;
 unsigned long ConfigNumber = 0;
 unsigned char XRDStatus = XRD_OK;
+bool FollowerMode = false;
 /*
  *
  *
@@ -666,7 +667,12 @@ void UARTCommandHandler(UART_Mode mode)
 				ReceivedData[index++] = 0x01;
 			else
 				ReceivedData[index++] = 0x00;
-			pc.Send(AssembleDataPacket(ReceivedData, 13), 23);
+			if(FollowerMode)
+				ReceivedData[index++] = 0x01;
+			else
+				ReceivedData[index++] = 0x00;
+
+			pc.Send(AssembleDataPacket(ReceivedData, 14), 24);
 		}
 		/*************************************************************/
 		/*GetSDData***************************************************/
@@ -698,6 +704,38 @@ void UARTCommandHandler(UART_Mode mode)
 
 				pc.Send(HitBuffer, CommandLengthNumber);
 			}
+		}
+		else if(CompareCharArrayToString(ReceivedData, "FollowerOn", 10))
+		{
+			CurrentOperationMode = Idle;
+			ACQ.set(1);
+			TIN.set(1);
+
+			CLS.set(0);
+			TCLK.set(0);
+			READ.set(1);
+			SHRCLK.set(0);
+			SIN.set(0);
+			CIN.set(0);
+			CSHIFT.set(0);
+			FollowerMode = true;
+			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
+		}
+		else if(CompareCharArrayToString(ReceivedData, "FollowerOff", 11))
+		{
+			CurrentOperationMode = Idle;
+			ACQ.set(0);
+			TIN.set(0);
+
+			CLS.set(0);
+			TCLK.set(0);
+			READ.set(0);
+			SHRCLK.set(0);
+			SIN.set(0);
+			CIN.set(0);
+			CSHIFT.set(0);
+			FollowerMode = false;
+			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
 		}
 		CurrentUARTMode = NoOp;
 		break;
@@ -737,7 +775,7 @@ void TS_Interrupt(void)
 {
 	unsigned char adcvalue[2] = {};
 	unsigned char NumberOfTriggeredChannels = 0;
-	if(ACQ.get() && !CLS.get())
+	if(ACQ.get() && !CLS.get() && !TIN.get())
 	{
 		ACQ.set(0);
 		SHRCLK.GenerateSHRClock(1, 36, SOUT, TriggeredChannels);

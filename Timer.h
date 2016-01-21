@@ -13,7 +13,7 @@
  */
 #ifndef TIMER_H_
 #define TIMER_H_
-
+#define CLOCK_FREQ_TIMER 25000
 namespace MSP430
 {
 	/*! \enum TIMER

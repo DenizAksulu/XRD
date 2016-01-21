@@ -62,7 +62,7 @@ namespace MSP430
 		{
 		case TimerA0:
 			TA0CCTL0 = CCIE;                          // CCR0 interrupt enabled
-			TA0CCR0 = 1000;
+			TA0CCR0 = CLOCK_FREQ_TIMER;
 			TA0Period = Period;
 			TA0Counter = 0;
 			TA0_1Counter = 0;
@@ -70,7 +70,7 @@ namespace MSP430
 			break;
 		case TimerA0_1:
 			TA0CCTL0 = CCIE;                          // CCR0 interrupt enabled
-			TA0CCR0 = 1000;
+			TA0CCR0 = CLOCK_FREQ_TIMER;
 			TA0_1Period = Period;
 			TA0Counter = 0;
 			TA0_1Counter = 0;
@@ -78,7 +78,7 @@ namespace MSP430
 			break;
 		case TimerA1:
 			TA1CCTL0 = CCIE;                          // CCR0 interrupt enabled
-			TA1CCR0 = 1000;
+			TA1CCR0 = CLOCK_FREQ_TIMER;
 			TA1Period = Period;
 			TA1Counter = 0;
 			TA1_1Counter = 0;
@@ -86,7 +86,7 @@ namespace MSP430
 			break;
 		case TimerA1_1:
 			TA1CCTL0 = CCIE;                          // CCR0 interrupt enabled
-			TA1CCR0 = 1000;
+			TA1CCR0 = CLOCK_FREQ_TIMER;
 			TA1_1Period = Period;
 			TA1Counter = 0;
 			TA1_1Counter = 0;
@@ -94,7 +94,7 @@ namespace MSP430
 			break;
 		case TimerB0:
 			TB0CCTL0 = CCIE;                          // CCR0 interrupt enabled
-			TB0CCR0 = 1000;
+			TB0CCR0 = CLOCK_FREQ_TIMER;
 			TB0Period = Period;
 			TB0Counter = 0;
 			break;
