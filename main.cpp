@@ -42,6 +42,7 @@ unsigned char TriggeredChannels[36] = {};
 double AcquiredChannelValue[36] = {};
 unsigned char HitBuffer[108*RAW_DATA_HIT_NUMBER] = {};
 bool ACQCompleted = false;
+unsigned long HIT_LIMIT = 100;
 
 ADC adc;
 
@@ -275,7 +276,7 @@ void RunOperationMode(Operation_Mode mode)
 		TriggerNumber = 0;
 		TimeoutCounter = 0;
 		enableSec(&RTCSecondInterrupt);
-		for(int i = 0; i < 100; i++)
+		for(unsigned long i = 0; i < HIT_LIMIT; i++)
 		{
 			WDTCTL = WDT_ADLY_1000;
 			CLS.set(1);
@@ -319,7 +320,7 @@ void RunOperationMode(Operation_Mode mode)
 		unsigned long MultipleAnodesEventNumber = 0;
 		unsigned long MultipleCathodesEventNumber = 0;
 		unsigned long CathodeOnlyEventNumber = 0;
-		for(int i = 0; i < 100; i++)
+		for(unsigned long i = 0; i < HIT_LIMIT; i++)
 		{
 			WDTCTL = WDT_ADLY_1000;
 			while(!ReadRawData(HitBuffer, 108*RAW_DATA_HIT_NUMBER, 108*RAW_DATA_HIT_NUMBER*i, RawDataNumber));
@@ -657,6 +658,8 @@ void UARTCommandHandler(UART_Mode mode)
 		else if(CompareCharArrayToString(ReceivedData, "GetStatus", 9))
 		{
 			int index = 9;
+			unsigned char limit_char[4];
+			*(unsigned long*)limit_char = HIT_LIMIT;
 			ReceivedData[index++] = CurrentOperationMode;
 			ReceivedData[index++] = XRDStatus;
 			if(!ENABLE_HV_POWER.get())
@@ -671,6 +674,17 @@ void UARTCommandHandler(UART_Mode mode)
 				ReceivedData[index++] = 0x01;
 			else
 				ReceivedData[index++] = 0x00;
+			ReceivedData[index++] = limit_char[0];
+			ReceivedData[index++] = limit_char[1];
+			ReceivedData[index++] = limit_char[2];
+			ReceivedData[index++] = limit_char[3];
+			pc.Send(AssembleDataPacket(ReceivedData, 18), 28);
+		}
+		else if(CompareCharArrayToString(ReceivedData, "GetXRDStatus", 12))
+		{
+			int index = 12;
+			ReceivedData[index++] = CurrentOperationMode;
+			ReceivedData[index++] = XRDStatus;
 
 			pc.Send(AssembleDataPacket(ReceivedData, 14), 24);
 		}
@@ -704,6 +718,11 @@ void UARTCommandHandler(UART_Mode mode)
 
 				pc.Send(HitBuffer, CommandLengthNumber);
 			}
+		}
+		else if(CompareCharArrayToString(ReceivedData, "SetHitLimit", 11))
+		{
+			HIT_LIMIT = (unsigned long)ReceivedData[11] + (unsigned long)ReceivedData[12]*256 + (unsigned long)ReceivedData[13]*65536 + (unsigned long)ReceivedData[14]*16777216;
+			pc.Send(AssembleDataPacket((unsigned char*)"ACK", 3), 13);
 		}
 		else if(CompareCharArrayToString(ReceivedData, "FollowerOn", 10))
 		{
