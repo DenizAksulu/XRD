@@ -150,6 +150,7 @@ unsigned char UpdateSystemInfo(unsigned char* RTC_AsCharArray, Operation_Mode La
 
 unsigned char AddRawData(unsigned char* RawData, unsigned int DataLength, unsigned long FileNumber)
 {
+	WDTCTL = WDT_ADLY_1000;
 	/*Adjusting File Name*/
 	unsigned int byteswritten = 0;
 	unsigned char index = 0;
@@ -186,6 +187,7 @@ unsigned char AddRawData(unsigned char* RawData, unsigned int DataLength, unsign
 
 unsigned char ReadRawData(unsigned char* RawData, unsigned int DataLength, unsigned long Offset, unsigned long FileNumber)
 {
+	WDTCTL = WDT_ADLY_1000;
 	unsigned char index = 0;
 	unsigned int bytesread = 0;
 
